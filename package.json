@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Checks whether the target customer in a business plan is a real taste cluster, using Qloo's taste data.",
   "type": "module",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "engines": { "node": ">=22" },
   "scripts": {
     "start": "node server.mjs",

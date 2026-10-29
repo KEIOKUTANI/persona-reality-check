@@ -69,4 +69,4 @@ Deploy: `render.yaml` is a Render Blueprint. Set `QLOO_API_KEY` (and optionally 
 
 ## License
 
-MIT
+GNU Affero General Public License v3.0 (AGPL-3.0-only). Copyright © 2026 Kei (Nyurano Works). See [LICENSE](LICENSE).
