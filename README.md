@@ -45,14 +45,16 @@ Input: *"Our core customers are women aged 25-29 in Sapporo who love Glamping, L
 
 `scripts/calibrate.mjs` runs six personas against live Qloo, three we expected to hold up and three we expected not to. Live results (2026-10-29):
 
-| Persona | Score | Red flags |
+| Persona | Expected | Score |
 |---|---|---|
-| 35–44, Snow Peak + Patagonia + The North Face, assumes Arc'teryx, MUJI | 79 | 0 |
-| 25–29 female, Lululemon + Blue Bottle Coffee + Aesop, assumes Glossier, Hermès | 58 | 2 (Blue Bottle skews 30–34, Aesop ≤24) |
-| 25–29 female, Glamping + Lululemon + Blue Bottle Coffee, assumes Snow Peak | 54 | 1 |
-| ≤24, Golf + Taylor Swift + The Godfather, assumes Doutor Coffee | 44 | 3 |
-| 55+, Nintendo Switch + Supreme + Komeda Coffee, assumes Hermès | 47 | 2 |
-| 45–54 male, Harley-Davidson + BTS + Sanrio, assumes Glossier | 41 | 5 |
+| 35–44, Snow Peak + Patagonia + The North Face, assumes Arc'teryx, MUJI | holds up | 79 |
+| 25–29 female, Lululemon + Blue Bottle Coffee + Aesop, assumes Glossier, Hermès | holds up | 57 (Qloo: Blue Bottle skews 30–34, Aesop ≤24) |
+| 25–29 female, Glamping + Lululemon + Blue Bottle Coffee, assumes Snow Peak, Aeon Mall | mixed | 54 |
+| ≤24, Golf + Taylor Swift + The Godfather, assumes Doutor Coffee | doesn't hold up | 45 |
+| 55+, Nintendo Switch + Supreme + Komeda Coffee, assumes Hermès | doesn't hold up | 46 |
+| 45–54 male, Harley-Davidson + BTS + Sanrio, assumes Glossier | doesn't hold up | 40 |
+
+The verdict is "Looks like real people" from 70, "Partly real" from 50, and "Probably a wish" below 50. The second persona shows the point of the tool: it looked plausible to us, but Qloo's audience data disagreed on age.
 
 General hobbies such as "Golf" resolve to Qloo tags. Qloo has no audience demographics for tags, and a tag used as a signal returned the same affinity for every target, so tags are reported as "could not be checked" instead of being scored.
 

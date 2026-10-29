@@ -108,7 +108,7 @@ async function run() {
 }
 
 function render({ extracted, result: d, memo }) {
-  const verdict = d.score >= 70 ? ["good", "Looks like real people"] : d.score >= 55 ? ["warn", "Partly real: check the red flags"] : ["bad", "Probably a wish, not a customer"];
+  const verdict = d.score >= 70 ? ["good", "Looks like real people"] : d.score >= 50 ? ["warn", "Partly real: check the red flags"] : ["bad", "Probably a wish, not a customer"];
   const color = { good: "var(--good)", warn: "var(--warn)", bad: "var(--bad)" }[verdict[0]];
   const order = { bad: 0, warn: 1, ok: 2 };
   const flags = [...d.flags].sort((a, b) => order[a.level] - order[b.level]);
