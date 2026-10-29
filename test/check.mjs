@@ -27,15 +27,23 @@ assert.match(memo.text, /don't hold up/);
 
 // 3. live path against the mock
 process.env.QLOO_API_KEY = "test-key";
-const r = await analyze({ age: "25_to_29", gender: "female", location: "Sapporo", interests: ["Glamping", "Lululemon", "Blue Bottle Coffee"], assumes: ["Snow Peak", "Aeon Mall"] });
+const r = await analyze({ age: "25_to_29", gender: "female", location: "Sapporo", interests: ["Golf", "Lululemon", "Blue Bottle Coffee"], assumes: ["Snow Peak", "Aeon Mall", "Patagonia"] });
 assert.equal(r.mode, "live");
-assert.equal(r.unknown.length, 0);
-assert.equal(r.audiences.filter((a) => a.age).length, 3);
+assert.deepEqual(r.unknown, []);
+assert.match(r.steps[0], /Golf \(tag\)/, "Golf must resolve to a tag, not the Argentine town");
+assert.match(r.steps[0], /Patagonia \(brand\)/, "Patagonia must resolve to the brand");
+assert.match(r.steps[0], /Aeon Mall \(place\)/, "an assumed mall may be a place");
+assert.equal(r.audiences.filter((a) => a.age).length, 2, "tags have no demographics");
+assert.equal(r.pairs.length, 3);
+assert.ok(r.pairs.every((x) => x.affinity !== null), "tag-to-entity pairs use the tag as the signal");
 assert.ok(r.flags.some((f) => f.kind === "assume" && /Aeon Mall/.test(f.text) && f.level === "bad"));
 assert.ok(r.flags.some((f) => f.kind === "assume" && /Snow Peak/.test(f.text) && f.level === "ok"));
-assert.equal(r.realistic.age, "25–29");
+assert.ok(!r.realistic.alsoLike.some((x) => x.name === "Lululemon"), "inputs are not suggested back");
+const tagCall = mock.calls.find((c) => c.params["signal.interests.tags"]);
+assert.equal(tagCall.params["signal.interests.tags"], "urn:tag:category:place:golf");
 assert.ok(mock.calls.some((c) => c.params["signal.location.query"] === "Sapporo"), "location should reach Qloo");
 assert.ok(mock.calls.every((c) => c.key === "test-key"));
+assert.ok(!mock.calls.some((c) => Object.values(c.params).includes("")), "no empty query params");
 
 mock.server.close();
 console.log(`ok: sample (${gz.score} vs ${trail.score}), extractor, live path (${mock.calls.length} mock Qloo calls, score ${r.score})`);
