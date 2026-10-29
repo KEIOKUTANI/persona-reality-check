@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Persona Reality Check</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1}.tabs button[aria-selected=false]{background:var(--accent-soft);color:var(--accent)}
+textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;resize:vertical}
+.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.parts div{background:var(--bg);border-radius:8px;padding:8px;text-align:center}.parts b{display:block;font-size:20px}
+.memo{background:var(--accent-soft);border-radius:10px;padding:12px 14px;margin-top:14px}
+.quote{font-size:13px;color:var(--muted);border-left:3px solid var(--line);padding-left:8px;margin:6px 0}
+.chips span{display:inline-block;margin:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><h1>Persona Reality Check</h1><div class="sub">Paste the target customer from your business plan. An agent checks it against Qloo's taste data and tells you if these people really exist.</div></div>
+    <span id="mode" class="badge">…</span>
+  </header>
+  <div class="grid">
+    <div class="card">
+      <div class="tabs" role="tablist"><button type="button" id="tText" aria-selected="true">Paste plan text</button><button type="button" id="tForm" aria-selected="false">Fill in a form</button></div>
+      <div class="presets" id="presets"></div>
+      <form id="fText">
+        <label for="text">Target customer, as written in the plan (any language)</label>
+        <textarea id="text"></textarea>
+        <div style="margin-top:12px"><button>Check this persona</button></div>
+      </form>
+      <form id="fForm" hidden>
+        <div class="row">
+          <div><label>Age</label><select id="age">
+            <option value="24_and_younger">≤24</option><option value="25_to_29">25–29</option><option value="30_to_34">30–34</option>
+            <option value="35_to_44">35–44</option><option value="45_to_54">45–54</option><option value="55_and_older">55+</option></select></div>
+          <div><label>Gender</label><select id="gender"><option value="any">Any</option><option value="female">Female</option><option value="male">Male</option></select></div>
+        </div>
+        <label>Location (optional)</label><input id="location" placeholder="e.g. Sapporo">
+        <label>They are into (2–4, comma separated)</label><input id="interests" list="cat">
+        <label>So the plan assumes they also like (up to 3)</label><input id="assumes" list="cat">
+        <div style="margin-top:12px"><button>Check this persona</button></div>
+      </form>
+      <datalist id="cat"></datalist>
+      <p class="sub" id="known"></p>
+    </div>
+    <div id="out" class="card"><div class="empty">Pick an example or paste your own persona, then press “Check this persona”.</div></div>
+  </div>
+  <div class="foot">Qloo results describe aggregate taste patterns, not individuals. In sample mode the taste data is hand-made for the demo and is not Qloo data; with QLOO_API_KEY set, every number comes from the Qloo Taste AI™ API.</div>
+</div>
+<script>
+const EXAMPLES = {
+  "Glamping café, Hokkaido": { text: "Our core customers are women aged 25-29 in Sapporo who love Glamping, Lululemon and Blue Bottle Coffee. We assume they will also shop at Snow Peak and visit Aeon Mall, where we plan a pop-up.",
+    persona: { age: "25_to_29", gender: "female", location: "Sapporo", interests: ["Glamping", "Lululemon", "Blue Bottle Coffee"], assumes: ["Snow Peak", "Aeon Mall"] } },
+  "Retro kissaten for Gen Z": { text: "ターゲットはZ世代（24歳以下）。喫茶店巡りとゴルフが趣味で、テイラー・スウィフトが好き。普段はドトールにも行くはずなので、価格はドトール並みに設定する。",
+    persona: { age: "24_and_younger", gender: "any", location: "", interests: ["Kissaten culture", "Golf", "Taylor Swift"], assumes: ["Doutor Coffee"] } },
+  "Trail gear shop": { text: "Our customers are trail runners aged 35-44 who already own Snow Peak and Patagonia gear. We expect them to compare us with The North Face and MUJI.",
+    persona: { age: "35_to_44", gender: "any", location: "", interests: ["Snow Peak", "Patagonia", "Trail running"], assumes: ["The North Face", "MUJI"] } },
+};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const split = (s) => s.split(",").map((x) => x.trim()).filter(Boolean);
+const AGE = { "24_and_younger": "≤24", "25_to_29": "25–29", "30_to_34": "30–34", "35_to_44": "35–44", "45_to_54": "45–54", "55_and_older": "55+" };
+const pill = (a) => a === null || a === undefined ? '<span class="pill">n/a</span>' : `<span class="pill ${a >= 0.6 ? "good" : a >= 0.45 ? "warn" : "bad"}">${Math.round(a * 100)}</span>`;
+let tab = "text";
+
+function setTab(t) {
+  tab = t;
+  $("tText").setAttribute("aria-selected", t === "text"); $("tForm").setAttribute("aria-selected", t === "form");
+  $("fText").hidden = t !== "text"; $("fForm").hidden = t !== "form";
+}
+$("tText").onclick = () => setTab("text"); $("tForm").onclick = () => setTab("form");
+
+for (const [name, ex] of Object.entries(EXAMPLES)) {
+  const b = document.createElement("button"); b.type = "button"; b.className = "ghost"; b.textContent = name;
+  b.onclick = () => {
+    $("text").value = ex.text;
+    const p = ex.persona;
+    $("age").value = p.age; $("gender").value = p.gender; $("location").value = p.location; $("interests").value = p.interests.join(", "); $("assumes").value = p.assumes.join(", ");
+    run();
+  };
+  $("presets").appendChild(b);
+}
+
+fetch("/api/config").then((r) => r.json()).then((c) => {
+  $("mode").textContent = c.mode === "live" ? "Live: Qloo Taste AI" : "Sample data (not Qloo)";
+  $("mode").className = "badge" + (c.mode === "live" ? "" : " sample");
+  if (c.mode !== "live") {
+    $("cat").innerHTML = c.catalog.map((e) => `<option value="${esc(e.name)}">`).join("");
+    $("known").textContent = "Sample mode knows only: " + c.catalog.map((e) => e.name).join(", ");
+  }
+});
+
+$("fText").onsubmit = (e) => { e.preventDefault(); run(); };
+$("fForm").onsubmit = (e) => { e.preventDefault(); run(); };
+
+async function run() {
+  document.querySelectorAll("form button").forEach((b) => (b.disabled = true));
+  $("out").innerHTML = '<div class="empty">The agent is reading the plan and asking Qloo…</div>';
+  const body = tab === "text" ? { text: $("text").value }
+    : { persona: { age: $("age").value, gender: $("gender").value, location: $("location").value, interests: split($("interests").value), assumes: split($("assumes").value) } };
+  try {
+    const r = await fetch("/api/check", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error);
+    render(d);
+  } catch (err) { $("out").innerHTML = `<div class="flag">${esc(err.message)}</div>`; }
+  document.querySelectorAll("form button").forEach((b) => (b.disabled = false));
+}
+
+function render({ extracted, result: d, memo }) {
+  const verdict = d.score >= 70 ? ["good", "Looks like real people"] : d.score >= 55 ? ["warn", "Partly real: check the red flags"] : ["bad", "Probably a wish, not a customer"];
+  const color = { good: "var(--good)", warn: "var(--warn)", bad: "var(--bad)" }[verdict[0]];
+  const order = { bad: 0, warn: 1, ok: 2 };
+  const flags = [...d.flags].sort((a, b) => order[a.level] - order[b.level]);
+  const p = d.persona;
+  const curve = d.ageCurve ? `<h3 style="margin-top:16px">Who these interests actually attract, by age</h3>
+    <div style="display:flex;gap:6px;align-items:flex-end;height:84px">${d.ageCurve.map((a) => `<div style="flex:1;text-align:center">
+      <div style="height:${Math.round(8 + Math.max(-1, Math.min(1, a.skew)) * 30 + 30)}px;background:${a.age === AGE[p.age] ? "var(--warn)" : a.skew > 0 ? "var(--accent)" : "var(--line)"};border-radius:4px 4px 0 0"></div>
+      <div class="sub">${esc(a.age)}${a.age === AGE[p.age] ? " ◀ plan" : ""}</div></div>`).join("")}</div>` : "";
+  const rp = d.realistic || {};
+  $("out").innerHTML = `
+    ${extracted ? `<h3>The agent read this persona from your plan</h3>
+      <div class="sub">${AGE[p.age]} · ${p.gender === "any" ? "any gender" : p.gender}${p.location ? " · " + esc(p.location) : ""} · into <b>${esc(p.interests.join(", "))}</b>${p.assumes.length ? ` · assumed to like <b>${esc(p.assumes.join(", "))}</b>` : ""}</div>
+      ${extracted.quote ? `<div class="quote">“${esc(extracted.quote)}”</div>` : ""}<hr style="border:0;border-top:1px solid var(--line);margin:12px 0">` : ""}
+    <div style="display:flex;gap:16px;align-items:center">
+      <div class="score" style="color:${color}">${d.score}</div>
+      <div style="flex:1"><div style="font-weight:700">${verdict[1]}</div><div class="meter"><i style="width:${d.score}%;background:${color}"></i></div></div>
+    </div>
+    <div class="parts"><div><b>${d.parts.age}</b><span class="sub">Age fit</span></div><div><b>${d.parts.gender}</b><span class="sub">Gender fit</span></div>
+      <div><b>${d.parts.coherence}</b><span class="sub">Interests cohere</span></div><div><b>${d.parts.assumptions}</b><span class="sub">Assumptions hold</span></div></div>
+    <div class="memo"><b>Reviewer memo</b><div>${esc(memo.text)}</div><div class="sub" style="margin-top:4px">Written by ${esc(memo.by)} from the evidence below.</div></div>
+    <h3 style="margin-top:16px">Findings</h3>
+    ${flags.map((f) => `<div class="flag ${f.level === "bad" ? "" : f.level}">${esc(f.text)}</div>`).join("") || '<div class="flag ok">No contradictions found.</div>'}
+    ${d.unknown?.length ? `<div class="flag warn">Not found, so not checked: ${esc(d.unknown.join(", "))}</div>` : ""}
+    <div class="row" style="margin-top:12px;align-items:flex-start;flex-wrap:wrap">
+      <div><h3>Do the interests belong to the same people?</h3>
+        <table><tr><th>Pair</th><th class="num">Affinity</th></tr>${d.pairs.map((x) => `<tr><td>${esc(x.a)} × ${esc(x.b)}</td><td class="num">${pill(x.affinity)}</td></tr>`).join("")}</table></div>
+      <div><h3>Brands the plan assumes</h3>
+        ${d.assumed.length ? `<table><tr><th>Brand</th><th class="num">Fit</th></tr>${d.assumed.map((a) => `<tr><td>${esc(a.name)}</td><td class="num">${pill(a.affinity)}</td></tr>`).join("")}</table>` : '<div class="sub">None given.</div>'}</div>
+    </div>
+    ${curve}
+    <h3 style="margin-top:16px">The persona these interests really describe</h3>
+    <div class="flag ok">${rp.age ? `Mostly <b>${esc(rp.age)}</b>${rp.female !== undefined ? `, about <b>${rp.female}% female</b>` : ""}. ` : ""}This taste mix also over-indexes on:
+      <span class="chips">${(rp.alsoLike || []).map((x) => `<span class="pill good">${esc(x.name)}</span>`).join(" ")}</span></div>
+    <h3 style="margin-top:16px">What the agent did</h3>
+    <ol class="steps">${d.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>`;
+}
+</script>
+</body>
+</html>

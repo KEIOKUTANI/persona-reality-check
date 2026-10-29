@@ -1,0 +1,39 @@
+# Devpost submission draft: Persona Reality Check (Qloo hackathon)
+
+Replace `<DEMO_URL>` and `<REPO_URL>`.
+
+## Project name
+Persona Reality Check
+
+## Tagline
+Paste the target customer from your business plan. An agent checks it against Qloo's taste data and tells you whether these people really exist.
+
+## Try it
+- Live demo: `<DEMO_URL>`. Press one of the three examples, or paste a persona from any plan (English or Japanese).
+- Code: `<REPO_URL>`
+
+## Inspiration
+I help small businesses and chambers of commerce in Japan adopt AI. Every startup plan and grant application has a "target customer" paragraph, and many of them describe people who don't exist: a "Gen Z retro coffee shop" whose customers love golf and old kissaten, both of which skew 55+. Advisors can sense it but can't prove it, so plans go ahead with the wrong customer in mind.
+
+## What it does
+Paste the persona paragraph. The agent extracts age, gender, location, interests and the brands the plan assumes, then uses Qloo to check four things: whether the interests share an audience, whether that audience matches the claimed age and gender, whether the assumed brands fit this persona in this location, and who the real audience is. It returns a score, red/amber/green findings, an age chart with the plan's claim marked, and a short reviewer memo with one concrete fix.
+
+## How we built it
+- Qloo `/search` to resolve names, and `/v2/insights` for demographics (`urn:demographics`), cross-affinity (`signal.interests.entities` + `filter.results.entities`), persona-conditioned affinity (`signal.demographics.age/gender`, `signal.location.query`) and open recommendations.
+- An optional LLM step (NVIDIA Nemotron through an OpenAI-compatible API) reads the plan text and writes the memo. All numbers come from Qloo; the LLM only extracts and explains.
+- Plain Node.js, no dependencies. The key stays on the server. An offline test runs the live code path against a mock Qloo server.
+
+## Challenges
+- Turning affinities into findings a non-analyst trusts: every flag cites the Qloo number behind it, and the agent's steps are shown.
+- Keeping the claims honest: Qloo describes aggregate patterns, so the app says "this combination is rare", never "this person doesn't exist".
+
+## What we learned
+The most useful taste question for a small business isn't "what should I recommend?" but "is the customer I'm planning for real?"
+
+## What's next
+- A Japanese UI and a PDF report for chamber-of-commerce advisors.
+- Checking every persona in a batch of grant applications.
+- Suggesting a corrected persona and re-checking it.
+
+## Built with
+qloo, node.js, javascript, html, css, nvidia-nemotron, render
