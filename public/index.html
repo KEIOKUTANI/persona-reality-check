@@ -49,12 +49,12 @@ textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);b
 </div>
 <script>
 const EXAMPLES = {
-  "Glamping café, Hokkaido": { text: "Our core customers are women aged 25-29 in Sapporo who love Glamping, Lululemon and Blue Bottle Coffee. We assume they will also shop at Snow Peak and visit Aeon Mall, where we plan a pop-up.",
+  "Glamping café, Sapporo": { text: "Our core customers are women aged 25-29 in Sapporo who love Glamping, Lululemon and Blue Bottle Coffee. We assume they will also shop at Snow Peak and visit Aeon Mall, where we plan a pop-up.",
     persona: { age: "25_to_29", gender: "female", location: "Sapporo", interests: ["Glamping", "Lululemon", "Blue Bottle Coffee"], assumes: ["Snow Peak", "Aeon Mall"] } },
-  "Retro kissaten for Gen Z": { text: "ターゲットはZ世代（24歳以下）。喫茶店巡りとゴルフが趣味で、テイラー・スウィフトが好き。普段はドトールにも行くはずなので、価格はドトール並みに設定する。",
-    persona: { age: "24_and_younger", gender: "any", location: "", interests: ["Kissaten culture", "Golf", "Taylor Swift"], assumes: ["Doutor Coffee"] } },
-  "Trail gear shop": { text: "Our customers are trail runners aged 35-44 who already own Snow Peak and Patagonia gear. We expect them to compare us with The North Face and MUJI.",
-    persona: { age: "35_to_44", gender: "any", location: "", interests: ["Snow Peak", "Patagonia", "Trail running"], assumes: ["The North Face", "MUJI"] } },
+  "Gen Z café (Japanese plan)": { text: "ターゲットは24歳以下の若者。ゴルフと映画『ゴッドファーザー』、テイラー・スウィフトが好き。普段はドトールにも行くはずなので、価格はドトール並みにする。",
+    persona: { age: "24_and_younger", gender: "any", location: "", interests: ["Golf", "The Godfather", "Taylor Swift"], assumes: ["Doutor Coffee"] } },
+  "Outdoor gear shop": { text: "Our customers are hikers aged 35-44 who already own Snow Peak, Patagonia and The North Face gear. We expect them to also buy Arc'teryx and MUJI.",
+    persona: { age: "35_to_44", gender: "any", location: "", interests: ["Snow Peak", "Patagonia", "The North Face"], assumes: ["Arc'teryx", "MUJI"] } },
 };
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));

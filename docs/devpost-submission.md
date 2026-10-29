@@ -13,7 +13,7 @@ Paste the target customer from your business plan. An agent checks it against Ql
 - Code: `<REPO_URL>`
 
 ## Inspiration
-I help small businesses and chambers of commerce in Japan adopt AI. Every startup plan and grant application has a "target customer" paragraph, and many of them describe people who don't exist: a "Gen Z retro coffee shop" whose customers love golf and old kissaten, both of which skew 55+. Advisors can sense it but can't prove it, so plans go ahead with the wrong customer in mind.
+I help small businesses and chambers of commerce in Japan adopt AI. Every startup plan and grant application has a "target customer" paragraph, and many of them describe people who barely exist: "men aged 45-54 who ride Harley-Davidson, listen to BTS and collect Sanrio." In Qloo's data, Harley-Davidson's audience does over-index at 45-54, but BTS fans skew 25-29 and Sanrio fans 24 and under, and the three audiences barely overlap. Advisors can sense it but can't prove it, so plans go ahead with the wrong customer in mind.
 
 ## What it does
 Paste the persona paragraph. The agent extracts age, gender, location, interests and the brands the plan assumes, then uses Qloo to check four things: whether the interests share an audience, whether that audience matches the claimed age and gender, whether the assumed brands fit this persona in this location, and who the real audience is. It returns a score, red/amber/green findings, an age chart with the plan's claim marked, and a short reviewer memo with one concrete fix.

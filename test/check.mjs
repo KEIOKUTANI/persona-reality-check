@@ -35,12 +35,11 @@ assert.match(r.steps[0], /Patagonia \(brand\)/, "Patagonia must resolve to the b
 assert.match(r.steps[0], /Aeon Mall \(place\)/, "an assumed mall may be a place");
 assert.equal(r.audiences.filter((a) => a.age).length, 2, "tags have no demographics");
 assert.equal(r.pairs.length, 3);
-assert.ok(r.pairs.every((x) => x.affinity !== null), "tag-to-entity pairs use the tag as the signal");
+assert.equal(r.pairs.filter((x) => x.affinity !== null).length, 1, "pairs with a tag are not scored");
+assert.ok(r.flags.some((f) => f.kind === "tag" && /Golf/.test(f.text)));
 assert.ok(r.flags.some((f) => f.kind === "assume" && /Aeon Mall/.test(f.text) && f.level === "bad"));
 assert.ok(r.flags.some((f) => f.kind === "assume" && /Snow Peak/.test(f.text) && f.level === "ok"));
 assert.ok(!r.realistic.alsoLike.some((x) => x.name === "Lululemon"), "inputs are not suggested back");
-const tagCall = mock.calls.find((c) => c.params["signal.interests.tags"]);
-assert.equal(tagCall.params["signal.interests.tags"], "urn:tag:category:place:golf");
 assert.ok(mock.calls.some((c) => c.params["signal.location.query"] === "Sapporo"), "location should reach Qloo");
 assert.ok(mock.calls.every((c) => c.key === "test-key"));
 assert.ok(!mock.calls.some((c) => Object.values(c.params).includes("")), "no empty query params");

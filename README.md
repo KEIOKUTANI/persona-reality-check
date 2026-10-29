@@ -13,7 +13,7 @@ Persona Reality Check turns that gut feeling into evidence:
 
 It ends with a score, red/amber/green findings, and a short reviewer memo with one concrete fix.
 
-![Gen Z kissaten example](docs/screenshots/gen-z-kissaten.png)
+![Example result](docs/screenshots/gen-z-kissaten.png)
 
 ## How it works
 
@@ -39,7 +39,22 @@ Input: *"Our core customers are women aged 25-29 in Sapporo who love Glamping, L
 3. `/v2/insights?filter.type=urn:demographics&signal.interests.entities=<Lululemon>` → age and gender skew.
 4. `/v2/insights?filter.type=urn:entity:brand&signal.interests.entities=<Glamping>&filter.results.entities=<Lululemon>,<Blue Bottle>` → pair affinities.
 5. `/v2/insights?filter.type=urn:entity:brand&signal.interests.entities=<all three>&filter.results.entities=<Snow Peak>&signal.demographics.age=25_to_29&signal.demographics.gender=female&signal.location.query=Sapporo` → does the assumption hold for *this* persona.
-6. Score = 30% age fit + 15% gender fit + 25% interest coherence + 30% assumption fit. Pair affinity below 0.45 and assumption affinity below 0.5 are flagged (`PAIR_MIN`, `ASSUME_MIN`).
+6. Score = 30% age fit + 15% gender fit + 25% interest coherence + 30% assumption fit. Qloo affinities sit in a narrow high band, so they are rescaled from 0.60–0.95 to 0–1 before scoring. A pair below 0.73 or an assumed brand below 0.78 is flagged (`PAIR_MIN`, `ASSUME_MIN`), and an age band the interest's audience under-indexes on by more than 0.15 is flagged.
+
+### Calibration
+
+`scripts/calibrate.mjs` runs six personas against live Qloo, three we expected to hold up and three we expected not to. Live results (2026-10-29):
+
+| Persona | Score | Red flags |
+|---|---|---|
+| 35–44, Snow Peak + Patagonia + The North Face, assumes Arc'teryx, MUJI | 79 | 0 |
+| 25–29 female, Lululemon + Blue Bottle Coffee + Aesop, assumes Glossier, Hermès | 58 | 2 (Blue Bottle skews 30–34, Aesop ≤24) |
+| 25–29 female, Glamping + Lululemon + Blue Bottle Coffee, assumes Snow Peak | 54 | 1 |
+| ≤24, Golf + Taylor Swift + The Godfather, assumes Doutor Coffee | 44 | 3 |
+| 55+, Nintendo Switch + Supreme + Komeda Coffee, assumes Hermès | 47 | 2 |
+| 45–54 male, Harley-Davidson + BTS + Sanrio, assumes Glossier | 41 | 5 |
+
+General hobbies such as "Golf" resolve to Qloo tags. Qloo has no audience demographics for tags, and a tag used as a signal returned the same affinity for every target, so tags are reported as "could not be checked" instead of being scored.
 
 ## Run it
 
