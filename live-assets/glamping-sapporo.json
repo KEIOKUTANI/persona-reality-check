@@ -1,0 +1,188 @@
+{
+  "extracted": {
+    "age": "25_to_29",
+    "gender": "female",
+    "location": "Sapporo",
+    "interests": [
+      "Glamping",
+      "Lululemon",
+      "Blue Bottle Coffee"
+    ],
+    "assumes": [
+      "Snow Peak",
+      "Aeon Mall"
+    ],
+    "quote": "",
+    "by": "keyword rules (no LLM key set)"
+  },
+  "result": {
+    "mode": "live",
+    "persona": {
+      "age": "25_to_29",
+      "gender": "female",
+      "location": "Sapporo",
+      "interests": [
+        "Glamping",
+        "Lululemon",
+        "Blue Bottle Coffee"
+      ],
+      "assumes": [
+        "Snow Peak",
+        "Aeon Mall"
+      ]
+    },
+    "steps": [
+      "Read the plan and extracted the persona (keyword rules (no LLM key set))",
+      "Qloo /search and /v2/tags resolved 5 of 5 names: Glamping (tag), Lululemon (brand), Blue Bottle Coffee (brand), Snow Peak (brand), Aeon Mall (place)",
+      "Qloo insights (urn:demographics): age and gender skew of 2 interest audiences",
+      "Qloo insights: cross-affinity for 1 interest pairs",
+      "Qloo insights: affinity of 2 assumed brands/places for 25–29 female in Sapporo",
+      "Qloo insights: brands this exact taste mix over-indexes on",
+      "Scored: age fit 33, gender fit 100, interest coherence 44, assumption fit 61",
+      "Wrote the reviewer memo (template (no LLM key set))"
+    ],
+    "score": 54,
+    "parts": {
+      "age": 33,
+      "gender": 100,
+      "coherence": 44,
+      "assumptions": 61
+    },
+    "thresholds": {
+      "pair": 0.73,
+      "assume": 0.78
+    },
+    "flags": [
+      {
+        "level": "bad",
+        "kind": "age",
+        "text": "Blue Bottle Coffee fans skew 30–34, not 25–29."
+      },
+      {
+        "level": "ok",
+        "kind": "assume",
+        "text": "Snow Peak fits this cluster (affinity 81)."
+      },
+      {
+        "level": "warn",
+        "kind": "tag",
+        "text": "Glamping is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check."
+      }
+    ],
+    "pairs": [
+      {
+        "a": "Glamping",
+        "b": "Lululemon",
+        "affinity": null
+      },
+      {
+        "a": "Glamping",
+        "b": "Blue Bottle Coffee",
+        "affinity": null
+      },
+      {
+        "a": "Lululemon",
+        "b": "Blue Bottle Coffee",
+        "affinity": 0.7553946060418819
+      }
+    ],
+    "assumed": [
+      {
+        "name": "Snow Peak",
+        "affinity": 0.8136500413041574
+      },
+      {
+        "name": "Aeon Mall",
+        "affinity": null
+      }
+    ],
+    "unknown": [],
+    "ageCurve": [
+      {
+        "age": "≤24",
+        "skew": 0
+      },
+      {
+        "age": "25–29",
+        "skew": -0.17
+      },
+      {
+        "age": "30–34",
+        "skew": 0.17500000000000002
+      },
+      {
+        "age": "35–44",
+        "skew": 0.21000000000000002
+      },
+      {
+        "age": "45–54",
+        "skew": -0.56
+      },
+      {
+        "age": "55+",
+        "skew": -0.31
+      }
+    ],
+    "audiences": [
+      {
+        "name": "Glamping",
+        "age": null,
+        "female": null
+      },
+      {
+        "name": "Lululemon",
+        "age": [
+          0.04,
+          -0.06,
+          0.05,
+          0.22,
+          -0.56,
+          -0.63
+        ],
+        "female": 0.79
+      },
+      {
+        "name": "Blue Bottle Coffee",
+        "age": [
+          -0.04,
+          -0.28,
+          0.30000000000000004,
+          0.2,
+          -0.56,
+          0.01
+        ],
+        "female": 0.42
+      }
+    ],
+    "realistic": {
+      "age": "35–44",
+      "female": 61,
+      "alsoLike": [
+        {
+          "name": "Kate Spade New York",
+          "affinity": 0.8911658621219087
+        },
+        {
+          "name": "Teavana",
+          "affinity": 0.888591286057275
+        },
+        {
+          "name": "Sorel",
+          "affinity": 0.8801076397502358
+        },
+        {
+          "name": "Tory Sport",
+          "affinity": 0.8777062782016517
+        },
+        {
+          "name": "Whole Foods Market",
+          "affinity": 0.8760593065481104
+        }
+      ]
+    }
+  },
+  "memo": {
+    "by": "template (no LLM key set)",
+    "text": "1 part of this persona doesn't hold up: Blue Bottle Coffee fans skew 30–34, not 25–29. The interests you listed mostly point to people aged 35–44, about 61% female. That audience also leans toward Kate Spade New York, Teavana, Sorel. Fix: either change the target age to match the interests, or replace the interests that don't fit with ones this age group actually shares."
+  }
+}

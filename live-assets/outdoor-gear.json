@@ -1,0 +1,190 @@
+{
+  "extracted": {
+    "age": "35_to_44",
+    "gender": "any",
+    "location": "",
+    "interests": [
+      "Snow Peak",
+      "Patagonia",
+      "The North Face"
+    ],
+    "assumes": [
+      "Arc'teryx",
+      "MUJI"
+    ],
+    "quote": "",
+    "by": "keyword rules (no LLM key set)"
+  },
+  "result": {
+    "mode": "live",
+    "persona": {
+      "age": "35_to_44",
+      "gender": "any",
+      "location": "",
+      "interests": [
+        "Snow Peak",
+        "Patagonia",
+        "The North Face"
+      ],
+      "assumes": [
+        "Arc'teryx",
+        "MUJI"
+      ]
+    },
+    "steps": [
+      "Read the plan and extracted the persona (keyword rules (no LLM key set))",
+      "Qloo /search and /v2/tags resolved 5 of 5 names: Snow Peak (brand), Patagonia (brand), The North Face (brand), Arc'teryx (brand), Muji (brand)",
+      "Qloo insights (urn:demographics): age and gender skew of 3 interest audiences",
+      "Qloo insights: cross-affinity for 3 interest pairs",
+      "Qloo insights: affinity of 2 assumed brands/places for 35–44",
+      "Qloo insights: brands this exact taste mix over-indexes on",
+      "Scored: age fit 69, gender fit 100, interest coherence 79, assumption fit 78",
+      "Wrote the reviewer memo (template (no LLM key set))"
+    ],
+    "score": 79,
+    "parts": {
+      "age": 69,
+      "gender": 100,
+      "coherence": 79,
+      "assumptions": 78
+    },
+    "thresholds": {
+      "pair": 0.73,
+      "assume": 0.78
+    },
+    "flags": [
+      {
+        "level": "ok",
+        "kind": "assume",
+        "text": "Arc'teryx fits this cluster (affinity 95)."
+      },
+      {
+        "level": "ok",
+        "kind": "assume",
+        "text": "Muji fits this cluster (affinity 80)."
+      }
+    ],
+    "pairs": [
+      {
+        "a": "Snow Peak",
+        "b": "Patagonia",
+        "affinity": 0.8432326585722093
+      },
+      {
+        "a": "Snow Peak",
+        "b": "The North Face",
+        "affinity": 0.8332641711194338
+      },
+      {
+        "a": "Patagonia",
+        "b": "The North Face",
+        "affinity": 0.9566991631255227
+      }
+    ],
+    "assumed": [
+      {
+        "name": "Arc'teryx",
+        "affinity": 0.9459433475639243
+      },
+      {
+        "name": "Muji",
+        "affinity": 0.8012135335295214
+      }
+    ],
+    "unknown": [],
+    "ageCurve": [
+      {
+        "age": "≤24",
+        "skew": -0.023333333333333334
+      },
+      {
+        "age": "25–29",
+        "skew": -0.12333333333333334
+      },
+      {
+        "age": "30–34",
+        "skew": -0.2133333333333333
+      },
+      {
+        "age": "35–44",
+        "skew": 0.24333333333333332
+      },
+      {
+        "age": "45–54",
+        "skew": -0.16
+      },
+      {
+        "age": "55+",
+        "skew": -0.40666666666666673
+      }
+    ],
+    "audiences": [
+      {
+        "name": "Snow Peak",
+        "age": [
+          -0.18,
+          -0.18,
+          0,
+          0.65,
+          -0.77,
+          -0.53
+        ],
+        "female": 0.22499999999999998
+      },
+      {
+        "name": "Patagonia",
+        "age": [
+          -0.01,
+          -0.09,
+          -0.71,
+          0.07,
+          0.1,
+          0.01
+        ],
+        "female": 0.44
+      },
+      {
+        "name": "The North Face",
+        "age": [
+          0.12,
+          -0.1,
+          0.07,
+          0.01,
+          0.19,
+          -0.7000000000000001
+        ],
+        "female": 0.32999999999999996
+      }
+    ],
+    "realistic": {
+      "age": "35–44",
+      "female": 33,
+      "alsoLike": [
+        {
+          "name": "Icebreaker",
+          "affinity": 0.9376384300836311
+        },
+        {
+          "name": "Ibex Outdoor Clothing",
+          "affinity": 0.9355432172182339
+        },
+        {
+          "name": "American Alpine Club",
+          "affinity": 0.9322045799455209
+        },
+        {
+          "name": "Western Rise",
+          "affinity": 0.9306988449790763
+        },
+        {
+          "name": "JUMPER Threads",
+          "affinity": 0.9198961227398091
+        }
+      ]
+    }
+  },
+  "memo": {
+    "by": "template (no LLM key set)",
+    "text": "The interests and assumptions in this persona hang together. The same audience also leans toward Icebreaker, Ibex Outdoor Clothing, American Alpine Club, which could be useful for partners or marketing."
+  }
+}

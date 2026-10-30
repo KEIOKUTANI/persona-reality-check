@@ -13,7 +13,9 @@ Persona Reality Check turns that gut feeling into evidence:
 
 It ends with a score, red/amber/green findings, and a short reviewer memo with one concrete fix.
 
-![Example result](docs/screenshots/gen-z-kissaten.png)
+![Live result: a Japanese plan checked against Qloo](docs/screenshots/live-genz-japanese.png)
+
+A 64-second screen recording of the live app is in [`live-assets/demo.mp4`](live-assets/demo.mp4).
 
 ## How it works
 
