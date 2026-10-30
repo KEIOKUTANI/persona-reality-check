@@ -1,6 +1,5 @@
 # Devpost submission draft: Persona Reality Check (Qloo hackathon)
 
-Replace https://persona-reality-check.onrender.com with the Render URL.
 
 ## Project name
 Persona Reality Check
