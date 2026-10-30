@@ -1,7 +1,7 @@
 // Persona Reality Check server. Zero dependencies: node server.mjs
 import { serve } from "./lib/serve.mjs";
 import { analyze, normalize } from "./lib/analyze.mjs";
-import { qlooEnabled } from "./lib/qloo.mjs";
+import { qlooEnabled, recentCalls } from "./lib/qloo.mjs";
 import { catalog } from "./lib/sample-taste.mjs";
 import { extractPersona, writeMemo, llmEnabled, llmModel } from "./lib/llm.mjs";
 
@@ -10,6 +10,8 @@ serve({
   dir: import.meta.dirname,
   routes: {
     "GET /api/health": async () => ({ ok: true }),
+    // Last Qloo calls (no key) and the Node version, to compare a hosted run with a local one.
+    "GET /api/debug": async () => ({ node: process.version, calls: recentCalls }),
     "GET /api/config": async () => ({
       mode: qlooEnabled() ? "live" : "sample",
       llm: llmEnabled() ? llmModel() : null,
