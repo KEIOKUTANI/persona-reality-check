@@ -2,6 +2,7 @@
   "extracted": {
     "age": "35_to_44",
     "gender": "any",
+    "kind": "brand",
     "location": "",
     "interests": [
       "Snow Peak",
@@ -19,6 +20,9 @@
     "mode": "live",
     "persona": {
       "age": "35_to_44",
+      "ages": [
+        "35_to_44"
+      ],
       "gender": "any",
       "location": "",
       "interests": [
@@ -29,7 +33,8 @@
       "assumes": [
         "Arc'teryx",
         "MUJI"
-      ]
+      ],
+      "kind": "brand"
     },
     "steps": [
       "Read the plan and extracted the persona (keyword rules (no LLM key set))",
@@ -39,7 +44,8 @@
       "Qloo insights: affinity of 2 assumed brands/places for 35–44",
       "Qloo insights: brands this exact taste mix over-indexes on",
       "Scored: age fit 69, gender fit 100, interest coherence 79, assumption fit 78",
-      "Wrote the reviewer memo (template (no LLM key set))"
+      "Wrote the reviewer memo (template (no LLM key set))",
+      "Qloo insights: 6 competitors this persona over-indexes on (brand)"
     ],
     "score": 79,
     "parts": {
@@ -50,18 +56,21 @@
     },
     "thresholds": {
       "pair": 0.73,
-      "assume": 0.78
+      "assume": 0.78,
+      "ageFlag": -0.15
     },
     "flags": [
       {
         "level": "ok",
         "kind": "assume",
-        "text": "Arc'teryx fits this cluster (affinity 95)."
+        "text": "Arc'teryx fits this cluster (affinity 95).",
+        "ja": "Arc'teryx はこの層に合っています（相性 95）。"
       },
       {
         "level": "ok",
         "kind": "assume",
-        "text": "Muji fits this cluster (affinity 80)."
+        "text": "Muji fits this cluster (affinity 80).",
+        "ja": "Muji はこの層に合っています（相性 80）。"
       }
     ],
     "pairs": [
@@ -158,6 +167,7 @@
     ],
     "realistic": {
       "age": "35–44",
+      "ageKey": "35_to_44",
       "female": 33,
       "alsoLike": [
         {
@@ -185,6 +195,71 @@
   },
   "memo": {
     "by": "template (no LLM key set)",
-    "text": "The interests and assumptions in this persona hang together. The same audience also leans toward Icebreaker, Ibex Outdoor Clothing, American Alpine Club, which could be useful for partners or marketing."
+    "text": "The interests and assumptions in this persona hang together. The same audience also leans toward Icebreaker, Ibex Outdoor Clothing, American Alpine Club, which could be useful for partners or marketing.",
+    "ja": "この想定客の好きなものと前提は、データ上きちんとまとまっています。同じ層は Icebreaker, Ibex Outdoor Clothing, American Alpine Club も好む傾向があり、提携先や宣伝先の候補になります。"
+  },
+  "revision": null,
+  "options": [],
+  "next": [
+    {
+      "en": "Partner, sponsor or co-promote with: Icebreaker, Ibex Outdoor Clothing, American Alpine Club, Western Rise. Qloo shows these people over-index on them, though your plan didn't name them.",
+      "ja": "提携・広告・共同企画の候補：Icebreaker、Ibex Outdoor Clothing、American Alpine Club、Western Rise。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+    },
+    {
+      "en": "Try Icebreaker and Ibex Outdoor Clothing as topics, collabs or references in your content and ads, and see which gets more response.",
+      "ja": "Icebreaker や Ibex Outdoor Clothing をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+    },
+    {
+      "en": "Target ads and outreach at ages 35–44.",
+      "ja": "広告や声かけの対象は 35〜44歳に絞る。"
+    },
+    {
+      "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+      "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+    }
+  ],
+  "competitors": {
+    "kind": "brand",
+    "kindJa": "ブランド",
+    "models": [
+      {
+        "name": "Icebreaker",
+        "affinity": 0.9376384300836311,
+        "en": "Its fans are your persona. Study its themes, titles, look and pricing, and copy what works.",
+        "ja": "ファンがこの想定客そのもの。テーマ・タイトル・見せ方・価格を研究して、うまくいっている所をまねる。"
+      },
+      {
+        "name": "Ibex Outdoor Clothing",
+        "affinity": 0.9355432172182339,
+        "en": "Its fans are your persona. Study its themes, titles, look and pricing, and copy what works.",
+        "ja": "ファンがこの想定客そのもの。テーマ・タイトル・見せ方・価格を研究して、うまくいっている所をまねる。"
+      },
+      {
+        "name": "American Alpine Club",
+        "affinity": 0.9322045799455209,
+        "en": "Its fans are your persona. Study its themes, titles, look and pricing, and copy what works.",
+        "ja": "ファンがこの想定客そのもの。テーマ・タイトル・見せ方・価格を研究して、うまくいっている所をまねる。"
+      }
+    ],
+    "rivals": [
+      {
+        "name": "Western Rise",
+        "affinity": 0.9306988449790763,
+        "en": "Competes for the same people's time and money. Find what it doesn't offer and fill that gap.",
+        "ja": "同じ人たちの時間とお金を取り合う相手。ここに無いものを探して、そこを埋める。"
+      },
+      {
+        "name": "JUMPER Threads",
+        "affinity": 0.9198961227398091,
+        "en": "Competes for the same people's time and money. Find what it doesn't offer and fill that gap.",
+        "ja": "同じ人たちの時間とお金を取り合う相手。ここに無いものを探して、そこを埋める。"
+      },
+      {
+        "name": "Merrell",
+        "affinity": 0.919160440312589,
+        "en": "Competes for the same people's time and money. Find what it doesn't offer and fill that gap.",
+        "ja": "同じ人たちの時間とお金を取り合う相手。ここに無いものを探して、そこを埋める。"
+      }
+    ]
   }
 }

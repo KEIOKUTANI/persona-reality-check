@@ -2,6 +2,7 @@
   "extracted": {
     "age": "25_to_29",
     "gender": "female",
+    "kind": "place",
     "location": "Sapporo",
     "interests": [
       "Glamping",
@@ -19,6 +20,9 @@
     "mode": "live",
     "persona": {
       "age": "25_to_29",
+      "ages": [
+        "25_to_29"
+      ],
       "gender": "female",
       "location": "Sapporo",
       "interests": [
@@ -29,7 +33,8 @@
       "assumes": [
         "Snow Peak",
         "Aeon Mall"
-      ]
+      ],
+      "kind": "place"
     },
     "steps": [
       "Read the plan and extracted the persona (keyword rules (no LLM key set))",
@@ -39,7 +44,9 @@
       "Qloo insights: affinity of 2 assumed brands/places for 25–29 female in Sapporo",
       "Qloo insights: brands this exact taste mix over-indexes on",
       "Scored: age fit 33, gender fit 100, interest coherence 44, assumption fit 61",
-      "Wrote the reviewer memo (template (no LLM key set))"
+      "Wrote the reviewer memo (template (no LLM key set))",
+      "Built 3 corrected personas and re-checked them with Qloo: 69, 67, 64 (yours: 54)",
+      "Qloo insights: 6 competitors this persona over-indexes on (place)"
     ],
     "score": 54,
     "parts": {
@@ -50,23 +57,27 @@
     },
     "thresholds": {
       "pair": 0.73,
-      "assume": 0.78
+      "assume": 0.78,
+      "ageFlag": -0.15
     },
     "flags": [
       {
         "level": "bad",
         "kind": "age",
-        "text": "Blue Bottle Coffee fans skew 30–34, not 25–29."
+        "text": "Blue Bottle Coffee fans skew 30–34, not 25–29.",
+        "ja": "Blue Bottle Coffee のファンの中心は30〜34歳で、25〜29歳ではありません。"
       },
       {
         "level": "ok",
         "kind": "assume",
-        "text": "Snow Peak fits this cluster (affinity 81)."
+        "text": "Snow Peak fits this cluster (affinity 81).",
+        "ja": "Snow Peak はこの層に合っています（相性 81）。"
       },
       {
         "level": "warn",
         "kind": "tag",
-        "text": "Glamping is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check."
+        "text": "Glamping is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check.",
+        "ja": "Glamping は Qloo では一般的な趣味の扱いで、ブランド・作品・場所ではないため確かめられませんでした。具体的なブランドやクラブ、施設の名前にすると、より正確に確かめられます。"
       }
     ],
     "pairs": [
@@ -156,6 +167,7 @@
     ],
     "realistic": {
       "age": "35–44",
+      "ageKey": "35_to_44",
       "female": 61,
       "alsoLike": [
         {
@@ -183,6 +195,459 @@
   },
   "memo": {
     "by": "template (no LLM key set)",
-    "text": "1 part of this persona doesn't hold up: Blue Bottle Coffee fans skew 30–34, not 25–29. The interests you listed mostly point to people aged 35–44, about 61% female. That audience also leans toward Kate Spade New York, Teavana, Sorel. Fix: either change the target age to match the interests, or replace the interests that don't fit with ones this age group actually shares."
+    "text": "1 part of this persona doesn't hold up: Blue Bottle Coffee fans skew 30–34, not 25–29. The interests you listed mostly point to people aged 35–44, about 61% female. That audience also leans toward Kate Spade New York, Teavana, Sorel. Fix: either change the target age to match the interests, or replace the interests that don't fit with ones this age group actually shares.",
+    "ja": "この想定客には 1 か所、データと合わない点があります：Blue Bottle Coffee のファンの中心は30〜34歳で、25〜29歳ではありません。挙げた好きなものから見ると、実際の中心は35〜44歳、女性が約 61%の層です。この層は Kate Spade New York, Teavana, Sorel も好む傾向があります。直し方：ターゲットの年齢を好みに合わせて変えるか、合わない好きなものを、この年齢層が本当に共有しているものに置き換えてください。"
+  },
+  "revision": {
+    "label": {
+      "en": "Keep your age, swap the interests",
+      "ja": "年齢はそのまま、好きなものを入れ替える"
+    },
+    "persona": {
+      "age": "25_to_29",
+      "ages": [
+        "25_to_29"
+      ],
+      "gender": "female",
+      "location": "Sapporo",
+      "interests": [
+        "Glamping",
+        "Lululemon",
+        "Kate Spade New York"
+      ],
+      "assumes": [
+        "Snow Peak",
+        "Aeon Mall"
+      ],
+      "kind": "place"
+    },
+    "changes": [
+      {
+        "en": "Drop \"Blue Bottle Coffee\": its fans are a different age (mostly 30–34).",
+        "ja": "「Blue Bottle Coffee」を外す：ファンの年齢層が違います（中心は30〜34歳）。"
+      },
+      {
+        "en": "Add \"Kate Spade New York\": this taste mix over-indexes on it.",
+        "ja": "「Kate Spade New York」を足す：この好みの層がよく好むものです。"
+      }
+    ],
+    "score": 69,
+    "parts": {
+      "age": 56,
+      "gender": 100,
+      "coherence": 88,
+      "assumptions": 52
+    },
+    "flags": [
+      {
+        "level": "ok",
+        "kind": "assume",
+        "text": "Snow Peak fits this cluster (affinity 78).",
+        "ja": "Snow Peak はこの層に合っています（相性 78）。"
+      },
+      {
+        "level": "warn",
+        "kind": "tag",
+        "text": "Glamping is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check.",
+        "ja": "Glamping は Qloo では一般的な趣味の扱いで、ブランド・作品・場所ではないため確かめられませんでした。具体的なブランドやクラブ、施設の名前にすると、より正確に確かめられます。"
+      }
+    ],
+    "alsoLike": [
+      {
+        "name": "Tory Burch",
+        "affinity": 0.9013270359521933
+      },
+      {
+        "name": "Sorel",
+        "affinity": 0.898214662376206
+      },
+      {
+        "name": "Banana Republic",
+        "affinity": 0.8898460875163764
+      },
+      {
+        "name": "UGG",
+        "affinity": 0.8891570191600138
+      },
+      {
+        "name": "Gap",
+        "affinity": 0.8891450662064073
+      }
+    ],
+    "sentence": {
+      "en": "Target customer: women aged 25–29 in Sapporo who are into Glamping, Lululemon, Kate Spade New York, and also like Snow Peak, Aeon Mall. The same people over-index on Tory Burch, Sorel, Banana Republic.",
+      "ja": "ターゲット：Sapporoの25〜29歳の女性で、Glamping、Lululemon、Kate Spade New Yorkが好きな人。Snow Peak、Aeon Mallも好む。同じ層は Tory Burch、Sorel、Banana Republic もよく好む。"
+    },
+    "next": [
+      {
+        "en": "Partner, sponsor or co-promote with: Kate Spade New York, Tory Burch, Sorel, Banana Republic. Qloo shows these people over-index on them, though your plan didn't name them.",
+        "ja": "提携・広告・共同企画の候補：Kate Spade New York、Tory Burch、Sorel、Banana Republic。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+      },
+      {
+        "en": "Try Kate Spade New York and Tory Burch as topics, collabs or references in your content and ads, and see which gets more response.",
+        "ja": "Kate Spade New York や Tory Burch をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+      },
+      {
+        "en": "Target ads and outreach at ages 25–29, female.",
+        "ja": "広告や声かけの対象は 25〜29歳・女性に絞る。"
+      },
+      {
+        "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+        "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+      }
+    ]
+  },
+  "options": [
+    {
+      "label": {
+        "en": "Keep your age, swap the interests",
+        "ja": "年齢はそのまま、好きなものを入れ替える"
+      },
+      "persona": {
+        "age": "25_to_29",
+        "ages": [
+          "25_to_29"
+        ],
+        "gender": "female",
+        "location": "Sapporo",
+        "interests": [
+          "Glamping",
+          "Lululemon",
+          "Kate Spade New York"
+        ],
+        "assumes": [
+          "Snow Peak",
+          "Aeon Mall"
+        ],
+        "kind": "place"
+      },
+      "changes": [
+        {
+          "en": "Drop \"Blue Bottle Coffee\": its fans are a different age (mostly 30–34).",
+          "ja": "「Blue Bottle Coffee」を外す：ファンの年齢層が違います（中心は30〜34歳）。"
+        },
+        {
+          "en": "Add \"Kate Spade New York\": this taste mix over-indexes on it.",
+          "ja": "「Kate Spade New York」を足す：この好みの層がよく好むものです。"
+        }
+      ],
+      "score": 69,
+      "parts": {
+        "age": 56,
+        "gender": 100,
+        "coherence": 88,
+        "assumptions": 52
+      },
+      "flags": [
+        {
+          "level": "ok",
+          "kind": "assume",
+          "text": "Snow Peak fits this cluster (affinity 78).",
+          "ja": "Snow Peak はこの層に合っています（相性 78）。"
+        },
+        {
+          "level": "warn",
+          "kind": "tag",
+          "text": "Glamping is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check.",
+          "ja": "Glamping は Qloo では一般的な趣味の扱いで、ブランド・作品・場所ではないため確かめられませんでした。具体的なブランドやクラブ、施設の名前にすると、より正確に確かめられます。"
+        }
+      ],
+      "alsoLike": [
+        {
+          "name": "Tory Burch",
+          "affinity": 0.9013270359521933
+        },
+        {
+          "name": "Sorel",
+          "affinity": 0.898214662376206
+        },
+        {
+          "name": "Banana Republic",
+          "affinity": 0.8898460875163764
+        },
+        {
+          "name": "UGG",
+          "affinity": 0.8891570191600138
+        },
+        {
+          "name": "Gap",
+          "affinity": 0.8891450662064073
+        }
+      ],
+      "sentence": {
+        "en": "Target customer: women aged 25–29 in Sapporo who are into Glamping, Lululemon, Kate Spade New York, and also like Snow Peak, Aeon Mall. The same people over-index on Tory Burch, Sorel, Banana Republic.",
+        "ja": "ターゲット：Sapporoの25〜29歳の女性で、Glamping、Lululemon、Kate Spade New Yorkが好きな人。Snow Peak、Aeon Mallも好む。同じ層は Tory Burch、Sorel、Banana Republic もよく好む。"
+      },
+      "next": [
+        {
+          "en": "Partner, sponsor or co-promote with: Kate Spade New York, Tory Burch, Sorel, Banana Republic. Qloo shows these people over-index on them, though your plan didn't name them.",
+          "ja": "提携・広告・共同企画の候補：Kate Spade New York、Tory Burch、Sorel、Banana Republic。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+        },
+        {
+          "en": "Try Kate Spade New York and Tory Burch as topics, collabs or references in your content and ads, and see which gets more response.",
+          "ja": "Kate Spade New York や Tory Burch をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+        },
+        {
+          "en": "Target ads and outreach at ages 25–29, female.",
+          "ja": "広告や声かけの対象は 25〜29歳・女性に絞る。"
+        },
+        {
+          "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+          "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en": "Move the age to the whole mix (35–44)",
+        "ja": "好きなもの全体のファン層（35〜44歳）に年齢を寄せる"
+      },
+      "persona": {
+        "age": "35_to_44",
+        "ages": [
+          "35_to_44"
+        ],
+        "gender": "female",
+        "location": "Sapporo",
+        "interests": [
+          "Glamping",
+          "Lululemon",
+          "Blue Bottle Coffee"
+        ],
+        "assumes": [
+          "Snow Peak",
+          "Aeon Mall"
+        ],
+        "kind": "place"
+      },
+      "changes": [
+        {
+          "en": "Age 25–29 → 35–44: the audience these interests really have.",
+          "ja": "年齢 25〜29歳 → 35〜44歳：この好きなものを実際に好む層に合わせました。"
+        }
+      ],
+      "score": 67,
+      "parts": {
+        "age": 71,
+        "gender": 100,
+        "coherence": 44,
+        "assumptions": 64
+      },
+      "flags": [
+        {
+          "level": "ok",
+          "kind": "assume",
+          "text": "Snow Peak fits this cluster (affinity 83).",
+          "ja": "Snow Peak はこの層に合っています（相性 83）。"
+        },
+        {
+          "level": "warn",
+          "kind": "tag",
+          "text": "Glamping is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check.",
+          "ja": "Glamping は Qloo では一般的な趣味の扱いで、ブランド・作品・場所ではないため確かめられませんでした。具体的なブランドやクラブ、施設の名前にすると、より正確に確かめられます。"
+        }
+      ],
+      "alsoLike": [
+        {
+          "name": "Kate Spade New York",
+          "affinity": 0.885557624638752
+        },
+        {
+          "name": "Sorel",
+          "affinity": 0.8802345298224782
+        },
+        {
+          "name": "Sk-ii",
+          "affinity": 0.8800412300039625
+        },
+        {
+          "name": "J.Crew",
+          "affinity": 0.8793784694076601
+        },
+        {
+          "name": "Teavana",
+          "affinity": 0.878794373614579
+        }
+      ],
+      "sentence": {
+        "en": "Target customer: women aged 35–44 in Sapporo who are into Glamping, Lululemon, Blue Bottle Coffee, and also like Snow Peak, Aeon Mall. The same people over-index on Kate Spade New York, Sorel, Sk-ii.",
+        "ja": "ターゲット：Sapporoの35〜44歳の女性で、Glamping、Lululemon、Blue Bottle Coffeeが好きな人。Snow Peak、Aeon Mallも好む。同じ層は Kate Spade New York、Sorel、Sk-ii もよく好む。"
+      },
+      "next": [
+        {
+          "en": "Partner, sponsor or co-promote with: Kate Spade New York, Sorel, Sk-ii, J.Crew. Qloo shows these people over-index on them, though your plan didn't name them.",
+          "ja": "提携・広告・共同企画の候補：Kate Spade New York、Sorel、Sk-ii、J.Crew。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+        },
+        {
+          "en": "Try Kate Spade New York and Sorel as topics, collabs or references in your content and ads, and see which gets more response.",
+          "ja": "Kate Spade New York や Sorel をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+        },
+        {
+          "en": "Target ads and outreach at ages 35–44, female.",
+          "ja": "広告や声かけの対象は 35〜44歳・女性に絞る。"
+        },
+        {
+          "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+          "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en": "Move the age to Blue Bottle Coffee fans (30–34)",
+        "ja": "Blue Bottle Coffee のファン層（30〜34歳）に年齢を寄せる"
+      },
+      "persona": {
+        "age": "30_to_34",
+        "ages": [
+          "30_to_34"
+        ],
+        "gender": "female",
+        "location": "Sapporo",
+        "interests": [
+          "Glamping",
+          "Lululemon",
+          "Blue Bottle Coffee"
+        ],
+        "assumes": [
+          "Snow Peak",
+          "Aeon Mall"
+        ],
+        "kind": "place"
+      },
+      "changes": [
+        {
+          "en": "Age 25–29 → 30–34: the audience these interests really have.",
+          "ja": "年齢 25〜29歳 → 30〜34歳：この好きなものを実際に好む層に合わせました。"
+        }
+      ],
+      "score": 64,
+      "parts": {
+        "age": 68,
+        "gender": 100,
+        "coherence": 44,
+        "assumptions": 60
+      },
+      "flags": [
+        {
+          "level": "ok",
+          "kind": "assume",
+          "text": "Snow Peak fits this cluster (affinity 81).",
+          "ja": "Snow Peak はこの層に合っています（相性 81）。"
+        },
+        {
+          "level": "warn",
+          "kind": "tag",
+          "text": "Glamping is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check.",
+          "ja": "Glamping は Qloo では一般的な趣味の扱いで、ブランド・作品・場所ではないため確かめられませんでした。具体的なブランドやクラブ、施設の名前にすると、より正確に確かめられます。"
+        }
+      ],
+      "alsoLike": [
+        {
+          "name": "Teavana",
+          "affinity": 0.8873571963902308
+        },
+        {
+          "name": "Kate Spade New York",
+          "affinity": 0.8871427155467092
+        },
+        {
+          "name": "Verve Coffee Roasters",
+          "affinity": 0.8801542966652552
+        },
+        {
+          "name": "Sk-ii",
+          "affinity": 0.8796676492391217
+        },
+        {
+          "name": "Tory Sport",
+          "affinity": 0.8757886236802195
+        }
+      ],
+      "sentence": {
+        "en": "Target customer: women aged 30–34 in Sapporo who are into Glamping, Lululemon, Blue Bottle Coffee, and also like Snow Peak, Aeon Mall. The same people over-index on Teavana, Kate Spade New York, Verve Coffee Roasters.",
+        "ja": "ターゲット：Sapporoの30〜34歳の女性で、Glamping、Lululemon、Blue Bottle Coffeeが好きな人。Snow Peak、Aeon Mallも好む。同じ層は Teavana、Kate Spade New York、Verve Coffee Roasters もよく好む。"
+      },
+      "next": [
+        {
+          "en": "Partner, sponsor or co-promote with: Teavana, Kate Spade New York, Verve Coffee Roasters, Sk-ii. Qloo shows these people over-index on them, though your plan didn't name them.",
+          "ja": "提携・広告・共同企画の候補：Teavana、Kate Spade New York、Verve Coffee Roasters、Sk-ii。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+        },
+        {
+          "en": "Try Teavana and Kate Spade New York as topics, collabs or references in your content and ads, and see which gets more response.",
+          "ja": "Teavana や Kate Spade New York をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+        },
+        {
+          "en": "Target ads and outreach at ages 30–34, female.",
+          "ja": "広告や声かけの対象は 30〜34歳・女性に絞る。"
+        },
+        {
+          "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+          "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+        }
+      ]
+    }
+  ],
+  "next": [
+    {
+      "en": "Partner, sponsor or co-promote with: Kate Spade New York, Tory Burch, Sorel, Banana Republic. Qloo shows these people over-index on them, though your plan didn't name them.",
+      "ja": "提携・広告・共同企画の候補：Kate Spade New York、Tory Burch、Sorel、Banana Republic。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+    },
+    {
+      "en": "Try Kate Spade New York and Tory Burch as topics, collabs or references in your content and ads, and see which gets more response.",
+      "ja": "Kate Spade New York や Tory Burch をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+    },
+    {
+      "en": "Target ads and outreach at ages 25–29, female.",
+      "ja": "広告や声かけの対象は 25〜29歳・女性に絞る。"
+    },
+    {
+      "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+      "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+    }
+  ],
+  "competitors": {
+    "kind": "place",
+    "kindJa": "お店・場所",
+    "models": [
+      {
+        "name": "One World Trade Center",
+        "affinity": 0.9002813259213261,
+        "en": "Its fans are your persona. Study its themes, titles, look and pricing, and copy what works.",
+        "ja": "ファンがこの想定客そのもの。テーマ・タイトル・見せ方・価格を研究して、うまくいっている所をまねる。"
+      },
+      {
+        "name": "Luxor Hotel & Casino",
+        "affinity": 0.9001015821004736,
+        "en": "Its fans are your persona. Study its themes, titles, look and pricing, and copy what works.",
+        "ja": "ファンがこの想定客そのもの。テーマ・タイトル・見せ方・価格を研究して、うまくいっている所をまねる。"
+      },
+      {
+        "name": "Ben Paris",
+        "affinity": 0.8985894949691398,
+        "en": "Its fans are your persona. Study its themes, titles, look and pricing, and copy what works.",
+        "ja": "ファンがこの想定客そのもの。テーマ・タイトル・見せ方・価格を研究して、うまくいっている所をまねる。"
+      }
+    ],
+    "rivals": [
+      {
+        "name": "Texas A&M Hotel and Conference Center",
+        "affinity": 0.8962591799141058,
+        "en": "Competes for the same people's time and money. Find what it doesn't offer and fill that gap.",
+        "ja": "同じ人たちの時間とお金を取り合う相手。ここに無いものを探して、そこを埋める。"
+      },
+      {
+        "name": "Harry Caray's Italian Steakhouse",
+        "affinity": 0.8955705326944948,
+        "en": "Competes for the same people's time and money. Find what it doesn't offer and fill that gap.",
+        "ja": "同じ人たちの時間とお金を取り合う相手。ここに無いものを探して、そこを埋める。"
+      },
+      {
+        "name": "Deep Blu Seafood Grille",
+        "affinity": 0.890698719838567,
+        "en": "Competes for the same people's time and money. Find what it doesn't offer and fill that gap.",
+        "ja": "同じ人たちの時間とお金を取り合う相手。ここに無いものを探して、そこを埋める。"
+      }
+    ]
   }
 }

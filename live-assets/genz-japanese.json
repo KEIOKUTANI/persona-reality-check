@@ -2,6 +2,7 @@
   "extracted": {
     "age": "24_and_younger",
     "gender": "any",
+    "kind": "brand",
     "location": "",
     "interests": [
       "Golf",
@@ -18,6 +19,9 @@
     "mode": "live",
     "persona": {
       "age": "24_and_younger",
+      "ages": [
+        "24_and_younger"
+      ],
       "gender": "any",
       "location": "",
       "interests": [
@@ -27,7 +31,8 @@
       ],
       "assumes": [
         "Doutor Coffee"
-      ]
+      ],
+      "kind": "brand"
     },
     "steps": [
       "Read the plan and extracted the persona (keyword rules (no LLM key set))",
@@ -37,7 +42,9 @@
       "Qloo insights: affinity of 1 assumed brands/places for ≤24",
       "Qloo insights: brands this exact taste mix over-indexes on",
       "Scored: age fit 40, gender fit 100, interest coherence 34, assumption fit 36",
-      "Wrote the reviewer memo (template (no LLM key set))"
+      "Wrote the reviewer memo (template (no LLM key set))",
+      "Built 2 corrected personas and re-checked them with Qloo: 86, 83 (yours: 46)",
+      "Qloo insights: 6 competitors this persona over-indexes on (brand)"
     ],
     "score": 46,
     "parts": {
@@ -48,28 +55,33 @@
     },
     "thresholds": {
       "pair": 0.73,
-      "assume": 0.78
+      "assume": 0.78,
+      "ageFlag": -0.15
     },
     "flags": [
       {
         "level": "bad",
         "kind": "age",
-        "text": "The Godfather fans skew 30–34, not ≤24."
+        "text": "The Godfather fans skew 30–34, not ≤24.",
+        "ja": "The Godfather のファンの中心は30〜34歳で、24歳以下ではありません。"
       },
       {
         "level": "bad",
         "kind": "pair",
-        "text": "The Godfather and Taylor Swift fans overlap weakly (affinity 72; a matching pair scores 73+)."
+        "text": "The Godfather and Taylor Swift fans overlap weakly (affinity 72; a matching pair scores 73+).",
+        "ja": "The Godfather と Taylor Swift のファンはあまり重なりません（相性 72。重なる組み合わせは 73 以上）。"
       },
       {
         "level": "bad",
         "kind": "assume",
-        "text": "The plan assumes they like Doutor Coffee, but this taste mix's affinity is only 72 (a good fit scores 78+)."
+        "text": "The plan assumes they like Doutor Coffee, but this taste mix's affinity is only 72 (a good fit scores 78+).",
+        "ja": "計画は Doutor Coffee も好きだと見込んでいますが、この好みの組み合わせとの相性は 72 しかありません（合う場合は 78 以上）。"
       },
       {
         "level": "warn",
         "kind": "tag",
-        "text": "Golf is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check."
+        "text": "Golf is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check.",
+        "ja": "Golf は Qloo では一般的な趣味の扱いで、ブランド・作品・場所ではないため確かめられませんでした。具体的なブランドやクラブ、施設の名前にすると、より正確に確かめられます。"
       }
     ],
     "pairs": [
@@ -155,6 +167,7 @@
     ],
     "realistic": {
       "age": "30–34",
+      "ageKey": "30_to_34",
       "female": 60,
       "alsoLike": [
         {
@@ -182,6 +195,381 @@
   },
   "memo": {
     "by": "template (no LLM key set)",
-    "text": "3 parts of this persona don't hold up: The Godfather fans skew 30–34, not ≤24; The Godfather and Taylor Swift fans overlap weakly (affinity 72; a matching pair scores 73+); The plan assumes they like Doutor Coffee, but this taste mix's affinity is only 72 (a good fit scores 78+). The interests you listed mostly point to people aged 30–34, about 60% female. That audience also leans toward Tommy Hilfiger, Abercrombie & Fitch, Calvin Klein. Fix: either change the target age to match the interests, or replace the interests that don't fit with ones this age group actually shares."
+    "text": "3 parts of this persona don't hold up: The Godfather fans skew 30–34, not ≤24; The Godfather and Taylor Swift fans overlap weakly (affinity 72; a matching pair scores 73+); The plan assumes they like Doutor Coffee, but this taste mix's affinity is only 72 (a good fit scores 78+). The interests you listed mostly point to people aged 30–34, about 60% female. That audience also leans toward Tommy Hilfiger, Abercrombie & Fitch, Calvin Klein. Fix: either change the target age to match the interests, or replace the interests that don't fit with ones this age group actually shares.",
+    "ja": "この想定客には 3 か所、データと合わない点があります：The Godfather のファンの中心は30〜34歳で、24歳以下ではありません／The Godfather と Taylor Swift のファンはあまり重なりません（相性 72。重なる組み合わせは 73 以上）／計画は Doutor Coffee も好きだと見込んでいますが、この好みの組み合わせとの相性は 72 しかありません（合う場合は 78 以上）。挙げた好きなものから見ると、実際の中心は30〜34歳、女性が約 60%の層です。この層は Tommy Hilfiger, Abercrombie & Fitch, Calvin Klein も好む傾向があります。直し方：ターゲットの年齢を好みに合わせて変えるか、合わない好きなものを、この年齢層が本当に共有しているものに置き換えてください。"
+  },
+  "revision": {
+    "label": {
+      "en": "Keep your age, swap the interests",
+      "ja": "年齢はそのまま、好きなものを入れ替える"
+    },
+    "persona": {
+      "age": "24_and_younger",
+      "ages": [
+        "24_and_younger"
+      ],
+      "gender": "any",
+      "location": "",
+      "interests": [
+        "Golf",
+        "Taylor Swift",
+        "Tommy Hilfiger"
+      ],
+      "assumes": [
+        "Abercrombie & Fitch"
+      ],
+      "kind": "brand"
+    },
+    "changes": [
+      {
+        "en": "Drop \"The Godfather\": its fans are a different age (mostly 30–34).",
+        "ja": "「The Godfather」を外す：ファンの年齢層が違います（中心は30〜34歳）。"
+      },
+      {
+        "en": "Add \"Tommy Hilfiger\": this taste mix over-indexes on it.",
+        "ja": "「Tommy Hilfiger」を足す：この好みの層がよく好むものです。"
+      },
+      {
+        "en": "Replace assumed \"Doutor Coffee\" with \"Abercrombie & Fitch\".",
+        "ja": "見込み「Doutor Coffee」を「Abercrombie & Fitch」に置き換え。"
+      }
+    ],
+    "score": 86,
+    "parts": {
+      "age": 72,
+      "gender": 100,
+      "coherence": 95,
+      "assumptions": 85
+    },
+    "flags": [
+      {
+        "level": "ok",
+        "kind": "assume",
+        "text": "Abercrombie & Fitch fits this cluster (affinity 90).",
+        "ja": "Abercrombie & Fitch はこの層に合っています（相性 90）。"
+      },
+      {
+        "level": "warn",
+        "kind": "tag",
+        "text": "Golf is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check.",
+        "ja": "Golf は Qloo では一般的な趣味の扱いで、ブランド・作品・場所ではないため確かめられませんでした。具体的なブランドやクラブ、施設の名前にすると、より正確に確かめられます。"
+      }
+    ],
+    "alsoLike": [
+      {
+        "name": "Calvin Klein",
+        "affinity": 0.8909635181171858
+      },
+      {
+        "name": "Forever 21",
+        "affinity": 0.889004008117412
+      },
+      {
+        "name": "Coach",
+        "affinity": 0.8868794644856051
+      },
+      {
+        "name": "Burberry",
+        "affinity": 0.8862484431961171
+      },
+      {
+        "name": "Converse",
+        "affinity": 0.8858185163553133
+      }
+    ],
+    "sentence": {
+      "en": "Target customer: aged ≤24 who are into Golf, Taylor Swift, Tommy Hilfiger, and also like Abercrombie & Fitch. The same people over-index on Calvin Klein, Forever 21, Coach.",
+      "ja": "ターゲット：24歳以下で、Golf、Taylor Swift、Tommy Hilfigerが好きな人。Abercrombie & Fitchも好む。同じ層は Calvin Klein、Forever 21、Coach もよく好む。"
+    },
+    "next": [
+      {
+        "en": "Partner, sponsor or co-promote with: Tommy Hilfiger, Calvin Klein, Forever 21, Coach. Qloo shows these people over-index on them, though your plan didn't name them.",
+        "ja": "提携・広告・共同企画の候補：Tommy Hilfiger、Calvin Klein、Forever 21、Coach。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+      },
+      {
+        "en": "Try Tommy Hilfiger and Calvin Klein as topics, collabs or references in your content and ads, and see which gets more response.",
+        "ja": "Tommy Hilfiger や Calvin Klein をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+      },
+      {
+        "en": "Target ads and outreach at ages ≤24.",
+        "ja": "広告や声かけの対象は 24歳以下に絞る。"
+      },
+      {
+        "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+        "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+      }
+    ]
+  },
+  "options": [
+    {
+      "label": {
+        "en": "Keep your age, swap the interests",
+        "ja": "年齢はそのまま、好きなものを入れ替える"
+      },
+      "persona": {
+        "age": "24_and_younger",
+        "ages": [
+          "24_and_younger"
+        ],
+        "gender": "any",
+        "location": "",
+        "interests": [
+          "Golf",
+          "Taylor Swift",
+          "Tommy Hilfiger"
+        ],
+        "assumes": [
+          "Abercrombie & Fitch"
+        ],
+        "kind": "brand"
+      },
+      "changes": [
+        {
+          "en": "Drop \"The Godfather\": its fans are a different age (mostly 30–34).",
+          "ja": "「The Godfather」を外す：ファンの年齢層が違います（中心は30〜34歳）。"
+        },
+        {
+          "en": "Add \"Tommy Hilfiger\": this taste mix over-indexes on it.",
+          "ja": "「Tommy Hilfiger」を足す：この好みの層がよく好むものです。"
+        },
+        {
+          "en": "Replace assumed \"Doutor Coffee\" with \"Abercrombie & Fitch\".",
+          "ja": "見込み「Doutor Coffee」を「Abercrombie & Fitch」に置き換え。"
+        }
+      ],
+      "score": 86,
+      "parts": {
+        "age": 72,
+        "gender": 100,
+        "coherence": 95,
+        "assumptions": 85
+      },
+      "flags": [
+        {
+          "level": "ok",
+          "kind": "assume",
+          "text": "Abercrombie & Fitch fits this cluster (affinity 90).",
+          "ja": "Abercrombie & Fitch はこの層に合っています（相性 90）。"
+        },
+        {
+          "level": "warn",
+          "kind": "tag",
+          "text": "Golf is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check.",
+          "ja": "Golf は Qloo では一般的な趣味の扱いで、ブランド・作品・場所ではないため確かめられませんでした。具体的なブランドやクラブ、施設の名前にすると、より正確に確かめられます。"
+        }
+      ],
+      "alsoLike": [
+        {
+          "name": "Calvin Klein",
+          "affinity": 0.8909635181171858
+        },
+        {
+          "name": "Forever 21",
+          "affinity": 0.889004008117412
+        },
+        {
+          "name": "Coach",
+          "affinity": 0.8868794644856051
+        },
+        {
+          "name": "Burberry",
+          "affinity": 0.8862484431961171
+        },
+        {
+          "name": "Converse",
+          "affinity": 0.8858185163553133
+        }
+      ],
+      "sentence": {
+        "en": "Target customer: aged ≤24 who are into Golf, Taylor Swift, Tommy Hilfiger, and also like Abercrombie & Fitch. The same people over-index on Calvin Klein, Forever 21, Coach.",
+        "ja": "ターゲット：24歳以下で、Golf、Taylor Swift、Tommy Hilfigerが好きな人。Abercrombie & Fitchも好む。同じ層は Calvin Klein、Forever 21、Coach もよく好む。"
+      },
+      "next": [
+        {
+          "en": "Partner, sponsor or co-promote with: Tommy Hilfiger, Calvin Klein, Forever 21, Coach. Qloo shows these people over-index on them, though your plan didn't name them.",
+          "ja": "提携・広告・共同企画の候補：Tommy Hilfiger、Calvin Klein、Forever 21、Coach。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+        },
+        {
+          "en": "Try Tommy Hilfiger and Calvin Klein as topics, collabs or references in your content and ads, and see which gets more response.",
+          "ja": "Tommy Hilfiger や Calvin Klein をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+        },
+        {
+          "en": "Target ads and outreach at ages ≤24.",
+          "ja": "広告や声かけの対象は 24歳以下に絞る。"
+        },
+        {
+          "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+          "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en": "Move the age to The Godfather fans (30–34)",
+        "ja": "The Godfather のファン層（30〜34歳）に年齢を寄せる"
+      },
+      "persona": {
+        "age": "30_to_34",
+        "ages": [
+          "30_to_34"
+        ],
+        "gender": "any",
+        "location": "",
+        "interests": [
+          "Golf",
+          "Taylor Swift",
+          "Tommy Hilfiger"
+        ],
+        "assumes": [
+          "Abercrombie & Fitch"
+        ],
+        "kind": "brand"
+      },
+      "changes": [
+        {
+          "en": "Age ≤24 → 30–34: the audience these interests really have.",
+          "ja": "年齢 24歳以下 → 30〜34歳：この好きなものを実際に好む層に合わせました。"
+        },
+        {
+          "en": "Drop \"The Godfather\": its fans barely overlap with the other interests.",
+          "ja": "「The Godfather」を外す：ほかの好きなもののファンとあまり重なりません。"
+        },
+        {
+          "en": "Add \"Tommy Hilfiger\": this taste mix over-indexes on it.",
+          "ja": "「Tommy Hilfiger」を足す：この好みの層がよく好むものです。"
+        },
+        {
+          "en": "Replace assumed \"Doutor Coffee\" with \"Abercrombie & Fitch\".",
+          "ja": "見込み「Doutor Coffee」を「Abercrombie & Fitch」に置き換え。"
+        }
+      ],
+      "score": 83,
+      "parts": {
+        "age": 71,
+        "gender": 100,
+        "coherence": 95,
+        "assumptions": 77
+      },
+      "flags": [
+        {
+          "level": "ok",
+          "kind": "assume",
+          "text": "Abercrombie & Fitch fits this cluster (affinity 87).",
+          "ja": "Abercrombie & Fitch はこの層に合っています（相性 87）。"
+        },
+        {
+          "level": "warn",
+          "kind": "tag",
+          "text": "Golf is a general hobby in Qloo, not a brand, title or place, so it could not be checked. Name a specific brand, club or venue for a sharper check.",
+          "ja": "Golf は Qloo では一般的な趣味の扱いで、ブランド・作品・場所ではないため確かめられませんでした。具体的なブランドやクラブ、施設の名前にすると、より正確に確かめられます。"
+        }
+      ],
+      "alsoLike": [
+        {
+          "name": "Forever 21",
+          "affinity": 0.8817456404347371
+        },
+        {
+          "name": "Calvin Klein",
+          "affinity": 0.8815126291788252
+        },
+        {
+          "name": "Victoria's Secret",
+          "affinity": 0.8790964076873109
+        },
+        {
+          "name": "Burberry",
+          "affinity": 0.8770741585749323
+        },
+        {
+          "name": "Michael Kors",
+          "affinity": 0.8754693032347262
+        }
+      ],
+      "sentence": {
+        "en": "Target customer: aged 30–34 who are into Golf, Taylor Swift, Tommy Hilfiger, and also like Abercrombie & Fitch. The same people over-index on Forever 21, Calvin Klein, Victoria's Secret.",
+        "ja": "ターゲット：30〜34歳で、Golf、Taylor Swift、Tommy Hilfigerが好きな人。Abercrombie & Fitchも好む。同じ層は Forever 21、Calvin Klein、Victoria's Secret もよく好む。"
+      },
+      "next": [
+        {
+          "en": "Partner, sponsor or co-promote with: Tommy Hilfiger, Forever 21, Calvin Klein, Victoria's Secret. Qloo shows these people over-index on them, though your plan didn't name them.",
+          "ja": "提携・広告・共同企画の候補：Tommy Hilfiger、Forever 21、Calvin Klein、Victoria's Secret。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+        },
+        {
+          "en": "Try Tommy Hilfiger and Forever 21 as topics, collabs or references in your content and ads, and see which gets more response.",
+          "ja": "Tommy Hilfiger や Forever 21 をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+        },
+        {
+          "en": "Target ads and outreach at ages 30–34.",
+          "ja": "広告や声かけの対象は 30〜34歳に絞る。"
+        },
+        {
+          "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+          "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+        }
+      ]
+    }
+  ],
+  "next": [
+    {
+      "en": "Partner, sponsor or co-promote with: Tommy Hilfiger, Calvin Klein, Forever 21, Coach. Qloo shows these people over-index on them, though your plan didn't name them.",
+      "ja": "提携・広告・共同企画の候補：Tommy Hilfiger、Calvin Klein、Forever 21、Coach。計画書には無かったが、この層がよく好むと Qloo が示したものです。"
+    },
+    {
+      "en": "Try Tommy Hilfiger and Calvin Klein as topics, collabs or references in your content and ads, and see which gets more response.",
+      "ja": "Tommy Hilfiger や Calvin Klein をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。"
+    },
+    {
+      "en": "Target ads and outreach at ages ≤24.",
+      "ja": "広告や声かけの対象は 24歳以下に絞る。"
+    },
+    {
+      "en": "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.",
+      "ja": "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。"
+    }
+  ],
+  "competitors": {
+    "kind": "brand",
+    "kindJa": "ブランド",
+    "models": [
+      {
+        "name": "Calvin Klein",
+        "affinity": 0.8909635181171858,
+        "en": "Its fans are your persona. Study its themes, titles, look and pricing, and copy what works.",
+        "ja": "ファンがこの想定客そのもの。テーマ・タイトル・見せ方・価格を研究して、うまくいっている所をまねる。"
+      },
+      {
+        "name": "Forever 21",
+        "affinity": 0.889004008117412,
+        "en": "Its fans are your persona. Study its themes, titles, look and pricing, and copy what works.",
+        "ja": "ファンがこの想定客そのもの。テーマ・タイトル・見せ方・価格を研究して、うまくいっている所をまねる。"
+      },
+      {
+        "name": "Coach",
+        "affinity": 0.8868794644856051,
+        "en": "Its fans are your persona. Study its themes, titles, look and pricing, and copy what works.",
+        "ja": "ファンがこの想定客そのもの。テーマ・タイトル・見せ方・価格を研究して、うまくいっている所をまねる。"
+      }
+    ],
+    "rivals": [
+      {
+        "name": "Burberry",
+        "affinity": 0.8862484431961171,
+        "en": "Competes for the same people's time and money. Find what it doesn't offer and fill that gap.",
+        "ja": "同じ人たちの時間とお金を取り合う相手。ここに無いものを探して、そこを埋める。"
+      },
+      {
+        "name": "Converse",
+        "affinity": 0.8858185163553133,
+        "en": "Competes for the same people's time and money. Find what it doesn't offer and fill that gap.",
+        "ja": "同じ人たちの時間とお金を取り合う相手。ここに無いものを探して、そこを埋める。"
+      },
+      {
+        "name": "Gap",
+        "affinity": 0.8845206780938512,
+        "en": "Competes for the same people's time and money. Find what it doesn't offer and fill that gap.",
+        "ja": "同じ人たちの時間とお金を取り合う相手。ここに無いものを探して、そこを埋める。"
+      }
+    ]
   }
 }
