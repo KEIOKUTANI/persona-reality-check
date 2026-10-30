@@ -22,7 +22,7 @@ Paste the persona paragraph. The agent extracts age, gender, location, interests
 
 ## How we built it
 - Qloo `/search` to resolve names, and `/v2/insights` for demographics (`urn:demographics`), cross-affinity (`signal.interests.entities` + `filter.results.entities`), persona-conditioned affinity (`signal.demographics.age/gender`, `signal.location.query`) and open recommendations.
-- An optional LLM step (NVIDIA Nemotron through an OpenAI-compatible API) reads the plan text and writes the memo. All numbers come from Qloo; the LLM only extracts and explains.
+- Reading the plan and writing the memo is done by keyword rules (English and Japanese) and a template in the public demo. An LLM can be plugged in for both through any OpenAI-compatible API, but it is optional and off in the demo. All numbers come from Qloo either way.
 - Plain Node.js, no dependencies. The key stays on the server. An offline test runs the live code path against a mock Qloo server.
 
 ## Challenges
@@ -43,4 +43,4 @@ The most useful taste question for a small business isn't "what should I recomme
 - Thresholds were calibrated on six personas (table in the README); they are a first pass.
 
 ## Built with
-qloo, node.js, javascript, html, css, nvidia-nemotron, render
+qloo, node.js, javascript, html, css, render
