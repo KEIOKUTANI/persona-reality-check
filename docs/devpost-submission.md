@@ -12,7 +12,7 @@ Paste the target customer from your business plan. An agent checks it against Ql
 - Code: https://github.com/KEIOKUTANI/persona-reality-check
 
 ## Testing instructions (for judges)
-No login needed. Open https://persona-reality-check.onrender.com (the free server may take ~30 s to wake up), press one of the three example buttons, or paste any "target customer" paragraph in English or Japanese and press "Check this persona". "What the agent did" at the bottom of each result lists every Qloo call behind the numbers.
+No login needed. Open https://persona-reality-check.onrender.com (the free server sleeps when idle, so the first load can take up to a minute), press one of the three example buttons, or paste any "target customer" paragraph in English or Japanese and press "Check this persona". "What the agent did" at the bottom of each result lists every Qloo call behind the numbers.
 
 ## Inspiration
 I help small businesses and chambers of commerce in Japan adopt AI. Every startup plan and grant application has a "target customer" paragraph, and many of them describe people who barely exist: "men aged 45-54 who ride Harley-Davidson, listen to BTS and collect Sanrio." In Qloo's data, Harley-Davidson's audience does over-index at 45-54, but BTS fans skew 25-29 and Sanrio fans 24 and under, and the three audiences barely overlap. Advisors can sense it but can't prove it, so plans go ahead with the wrong customer in mind.
