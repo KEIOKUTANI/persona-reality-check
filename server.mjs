@@ -1,6 +1,6 @@
 // Persona Reality Check server. Zero dependencies: node server.mjs
 import { serve } from "./lib/serve.mjs";
-import { analyze, normalize, revise, competitors, agesLabel, jaAge } from "./lib/analyze.mjs";
+import { analyze, normalize, revisionOptions, competitors, agesLabel, jaAge } from "./lib/analyze.mjs";
 import { qlooEnabled, recentCalls } from "./lib/qloo.mjs";
 import { catalog } from "./lib/sample-taste.mjs";
 import { extractPersona, writeMemo, llmEnabled, llmModel } from "./lib/llm.mjs";
@@ -56,23 +56,21 @@ serve({
       const memo = await writeMemo(result.persona, result);
       result.steps = [...steps, ...result.steps, `Wrote the reviewer memo (${memo.by})`];
       // Agent loop, step 2: build a corrected persona from the evidence and check it again.
-      // Two ways to fix it (move the age to the interests, or keep the age and swap the interests): check both, keep the better,
-      // and only show it if it actually beats the user's persona.
-      let revision = null;
-      const fixes = [revise(result.persona, result), revise(result.persona, result, { keepAge: true })]
-        .filter((f, i, all) => f.changes.length && all.findIndex((g) => JSON.stringify(g.persona) === JSON.stringify(f.persona)) === i);
-      const checked = await Promise.all(fixes.map((f) => analyze(f.persona).then((again) => ({ fix: f, again })).catch(() => null)));
-      const best = checked.filter(Boolean).sort((a, b) => b.again.score - a.again.score)[0];
-      if (best && best.again.score > result.score) {
-        const { fix, again } = best;
-        revision = { persona: again.persona, changes: fix.changes, score: again.score, parts: again.parts, flags: again.flags, alsoLike: again.realistic.alsoLike, sentence: sentence(again.persona, again) };
-        result.steps.push(`Built ${fixes.length} corrected persona${fixes.length > 1 ? "s" : ""}, re-checked with Qloo and kept the best: ${result.score} → ${again.score}`);
-      } else if (fixes.length) result.steps.push(`Tried ${fixes.length} corrected personas; none scored higher than yours (${result.score}), so yours stays`);
-      const next = nextSteps(revision ? { ...result, persona: revision.persona, realistic: { ...result.realistic, alsoLike: revision.alsoLike } } : result);
+      // Several ways to fix it (keep the age and swap interests, or move the age to one interest's fans or the whole mix).
+      // Each is re-checked with Qloo; the user picks one, and the best score is shown first.
+      const fixes = revisionOptions(result.persona, result);
+      const checked = (await Promise.all(fixes.map((f) => analyze(f.persona).then((again) => ({ f, again })).catch(() => null)))).filter(Boolean);
+      const options = checked.map(({ f, again }) => ({ label: { en: f.en, ja: f.ja }, persona: again.persona, changes: f.changes, score: again.score, parts: again.parts, flags: again.flags, alsoLike: again.realistic.alsoLike, sentence: sentence(again.persona, again) }))
+        .sort((a, b) => b.score - a.score);
+      const revision = options[0] || null;
+      if (options.length) result.steps.push(`Built ${options.length} corrected persona${options.length > 1 ? "s" : ""} and re-checked them with Qloo: ${options.map((o) => o.score).join(", ")} (yours: ${result.score})`);
+      const nextFor = (o) => nextSteps(o ? { ...result, persona: o.persona, realistic: { ...result.realistic, alsoLike: o.alsoLike } } : result);
+      for (const o of options) o.next = nextFor(o);
+      const next = nextFor(revision);
       // Agent loop, step 3: who already wins these people (models to copy) and who competes for them.
       const rivals = await competitors(revision ? revision.persona : result.persona).catch(() => null);
       if (rivals) result.steps.push(`${result.mode === "live" ? "Qloo insights: " : ""}${rivals.models.length + rivals.rivals.length} competitors this persona over-indexes on (${rivals.kind})`);
-      return { extracted, result, memo, revision, next, competitors: rivals };
+      return { extracted, result, memo, revision, options, next, competitors: rivals };
     },
   },
 });

@@ -23,6 +23,8 @@ textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);b
 .fix .arrow{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px}.fix .arrow span{font-size:13px;font-weight:600;color:var(--muted)}
 .fix ul,.next ol{margin:8px 0 0;padding-left:20px}.fix li,.next li{margin:4px 0}
 .sentence{background:#fff;border:1px dashed var(--good);border-radius:8px;padding:10px;margin-top:10px}
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.opts button{background:#fff;color:var(--ink);border:1px solid var(--line);padding:6px 10px;font-size:13px;font-weight:600}
+.opts button[aria-pressed=true]{border-color:var(--good);background:var(--good);color:#fff}
 .next{background:var(--accent-soft);border-radius:12px;padding:14px;margin-top:14px}
 .comp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.comp>div{border:1px solid var(--line);border-radius:12px;padding:12px}
 .comp .it{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-weight:700}.comp .why{font-size:12px;color:var(--muted);margin-top:6px}
@@ -123,7 +125,7 @@ const T = {
     realH: "この好みの組み合わせが本当に表している客層", mostly: (a, f) => `中心は <b>${jaAge(a)}</b>${f !== undefined ? `、女性は約 <b>${f}%</b>` : ""}。`, alsoLike: "この層がほかに好むもの：",
     didH: "エージェントがしたこと",
     fixH: "エージェントが作った修正版の想定客（再チェック済み）", before: "仮説", after: "修正版", changes: "変えたところ",
-    useIt: "計画書にはこう書く", copyLine: "コピー", nextH: "次にやること",
+    useIt: "計画書にはこう書く", copyLine: "コピー", nextH: "次にやること", pickH: "直し方を選べます（どれも Qloo で再チェック済み）：",
     compH: (k) => `この想定客に好かれている競合（${{ brand: "ブランド", podcast: "番組・チャンネル", tv_show: "番組", place: "お店・場所" }[k]}）`,
     modelsH: "徹底的にまねたいお手本", rivalsH: "同じ人を取り合う潜在的な競合",
   },
@@ -198,7 +200,7 @@ async function run() {
     const d = await r.json();
     if (!r.ok) throw new Error(d.error);
     clearInterval(tick);
-    last = d; render(d);
+    last = d; pick = 0; render(d);
   } catch (err) { clearInterval(tick); $("out").innerHTML = `<div class="flag">${esc(err.message)}</div>`; }
   document.querySelectorAll("form button").forEach((b) => (b.disabled = false));
 }
@@ -210,7 +212,12 @@ const ageText = (p) => { const l = agesOf(p); if (l.length === 1) return l[0]; c
 const jaAge = (l) => (l.startsWith("≤") ? `${l.slice(1)}歳以下` : l.endsWith("+") ? `${l.slice(0, -1)}歳以上` : `${l.replace("–", "〜")}歳`);
 const tx = (f) => (lang === "ja" && f.ja ? f.ja : f.text);
 
-function render({ extracted, result: d, memo, revision: rv, next, competitors: cp }, animate = true) {
+let pick = 0;
+function render({ extracted, result: d, memo, revision, options, next: next0, competitors: cp }, animate = true) {
+  const opts = options?.length ? options : revision ? [revision] : [];
+  if (pick >= opts.length) pick = 0;
+  const rv = opts[pick] || null;
+  const next = rv?.next || next0;
   const verdict = d.score >= 70 ? ["good", t("good")] : d.score >= 50 ? ["warn", t("warn")] : ["bad", t("bad")];
   const color = { good: "var(--good)", warn: "var(--warn)", bad: "var(--bad)" }[verdict[0]];
   const order = { bad: 0, warn: 1, ok: 2 };
@@ -239,6 +246,7 @@ function render({ extracted, result: d, memo, revision: rv, next, competitors: c
       `<div><b style="color:${d.parts[k] >= 70 ? "var(--good)" : d.parts[k] >= 50 ? "var(--warn)" : "var(--bad)"}">${d.parts[k]}</b><span class="sub">${l}</span></div>`).join("")}</div>
     <div class="memo"><b>${t("memo")}</b><div>${esc(lang === "ja" && memo.ja ? memo.ja : memo.text)}</div><div class="sub" style="margin-top:4px">${esc(t("by")(memo.by))}</div></div>
     ${rv ? `<div class="fix"><h3>${t("fixH")}</h3>
+      ${opts.length > 1 ? `<div class="sub">${t("pickH")}</div><div class="opts">${opts.map((o, i) => `<button type="button" data-pick="${i}" aria-pressed="${i === pick}">${esc(lang === "ja" ? o.label.ja : o.label.en)}　${o.score}</button>`).join("")}</div>` : ""}
       <div class="arrow"><div>${d.score} <span>${t("before")}</span></div>→<div style="color:${rv.score >= 70 ? "var(--good)" : rv.score >= 50 ? "var(--warn)" : "var(--bad)"}">${rv.score} <span>${t("after")}</span></div></div>
       <div class="sub" style="margin-top:6px">${t("changes")}</div><ul>${rv.changes.map((c) => `<li>${esc(lang === "ja" ? c.ja : c.en)}</li>`).join("")}</ul>
       <div class="sentence"><b>${t("useIt")}</b> <button type="button" class="ghost" id="copyLine" style="float:right;padding:3px 10px;font-size:12px">${t("copyLine")}</button><div style="margin-top:4px">${esc(lang === "ja" ? rv.sentence.ja : rv.sentence.en)}</div></div></div>` : ""}
@@ -268,6 +276,7 @@ function render({ extracted, result: d, memo, revision: rv, next, competitors: c
     const count = (now) => { const k = Math.min(1, (now - t0) / 1100); $("num").textContent = Math.round(d.score * (1 - (1 - k) ** 3)); if (k < 1) requestAnimationFrame(count); };
     requestAnimationFrame(count);
   } else { ring.style.transition = "none"; ring.style.strokeDashoffset = 301.6 * (1 - d.score / 100); $("num").textContent = d.score; }
+  $("out").querySelectorAll("[data-pick]").forEach((b) => (b.onclick = () => { pick = Number(b.dataset.pick); render(last, false); }));
   if (rv) $("copyLine").onclick = () => navigator.clipboard.writeText(lang === "ja" ? rv.sentence.ja : rv.sentence.en).then(() => { $("copyLine").textContent = t("copied"); setTimeout(() => ($("copyLine").textContent = t("copyLine")), 1500); });
   $("copy").onclick = () => navigator.clipboard.writeText(report(last)).then(() => { $("copy").textContent = t("copied"); setTimeout(() => ($("copy").textContent = t("copy")), 1500); });
 }
@@ -278,9 +287,11 @@ function report({ result: d, memo }) {
   const lines = [`Persona Reality Check: ${d.score}/100`, `Persona: ${ageText(p)}, ${p.gender === "any" ? "any gender" : p.gender}${p.location ? ", " + p.location : ""}; into ${p.interests.join(", ")}${p.assumes.length ? "; assumed to like " + p.assumes.join(", ") : ""}`, "",
     `Memo: ${lang === "ja" && memo.ja ? memo.ja : memo.text}`, "", "Findings:", ...d.flags.map((f) => `- [${f.level === "bad" ? "RED" : f.level === "warn" ? "AMBER" : "OK"}] ${tx(f)}`)];
   if (d.realistic?.age) lines.push("", `The real audience: mostly ${d.realistic.age}${d.realistic.female !== undefined ? `, about ${d.realistic.female}% female` : ""}; also into ${(d.realistic.alsoLike || []).map((x) => x.name).join(", ")}`);
-  if (last.revision) lines.push("", `Corrected persona (re-checked): ${d.score} -> ${last.revision.score}`, ...last.revision.changes.map((c) => `- ${lang === "ja" ? c.ja : c.en}`), lang === "ja" ? last.revision.sentence.ja : last.revision.sentence.en);
+  const rv = last.options?.[pick] || last.revision;
+  if (rv) lines.push("", `Corrected persona (re-checked): ${d.score} -> ${rv.score}`, ...rv.changes.map((c) => `- ${lang === "ja" ? c.ja : c.en}`), lang === "ja" ? rv.sentence.ja : rv.sentence.en);
   if (last.competitors) lines.push("", `Models to copy: ${last.competitors.models.map((x) => x.name).join(", ")}`, `Potential rivals: ${last.competitors.rivals.map((x) => x.name).join(", ")}`);
-  if (last.next?.length) lines.push("", "Next:", ...last.next.map((x) => `- ${lang === "ja" ? x.ja : x.en}`));
+  const next = rv?.next || last.next;
+  if (next?.length) lines.push("", "Next:", ...next.map((x) => `- ${lang === "ja" ? x.ja : x.en}`));
   lines.push("", `Source: ${d.mode === "live" ? "Qloo Taste AI API" : "sample data (not Qloo)"}. Aggregate taste patterns, not individuals.`);
   return lines.join("\n");
 }
