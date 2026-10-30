@@ -19,6 +19,11 @@ textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);b
 .loading{padding:36px 8px}.loading li{color:var(--muted);margin:6px 0;transition:color .3s}.loading li.on{color:var(--ink);font-weight:600}
 .loading li.on::marker{content:"● "}.loading li.done{color:var(--good)}.loading li.done::marker{content:"✓ "}
 .fade{animation:fade .45s ease both}@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.fix{border:2px solid var(--good);border-radius:12px;padding:14px;margin-top:14px;background:#f6fdf7}
+.fix .arrow{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px}.fix .arrow span{font-size:13px;font-weight:600;color:var(--muted)}
+.fix ul,.next ol{margin:8px 0 0;padding-left:20px}.fix li,.next li{margin:4px 0}
+.sentence{background:#fff;border:1px dashed var(--good);border-radius:8px;padding:10px;margin-top:10px}
+.next{background:var(--accent-soft);border-radius:12px;padding:14px;margin-top:14px}
 .powered{font-size:11px;color:var(--muted);margin-top:4px}
 .lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-right:8px;vertical-align:middle}
 .lang button{background:none;color:var(--muted);padding:3px 10px;font-size:12px;border-radius:0}.lang button[aria-pressed=true]{background:var(--accent);color:#fff}
@@ -78,7 +83,7 @@ const T = {
     foot: "Qloo results describe aggregate taste patterns, not individuals. In sample mode the taste data is hand-made for the demo and is not Qloo data; with QLOO_API_KEY set, every number comes from the Qloo Taste AI™ API.",
     live: "Live: Qloo Taste AI", sample: "Sample data (not Qloo)", llm: "Plan reading and memo: ", knows: "Sample mode knows only: ",
     working: "The agent is working…",
-    steps: ["Reading the plan and pulling out the persona", "Finding each brand, title and place in Qloo", "Asking Qloo who each audience really is (age, gender)", "Checking whether the interests share fans", "Testing the brands the plan assumes", "Writing the reviewer memo"],
+    steps: ["Reading the plan and pulling out the persona", "Finding each brand, title and place in Qloo", "Asking Qloo who each audience really is (age, gender)", "Checking whether the interests share fans", "Testing the brands the plan assumes", "Writing the reviewer memo", "Building a corrected persona and checking it again"],
     good: "Looks like real people", warn: "Partly real: check the red flags", bad: "Probably a wish, not a customer",
     read: "The agent read this persona from your plan", anyGender: "any gender", into2: "into", assumed2: "assumed to like",
     copy: "Copy report", copied: "Copied", scoreNote: (n) => `Reality score out of 100. Every number below comes from ${n} live Qloo Taste AI checks.`, scoreSample: "Reality score out of 100. Sample data, not Qloo.",
@@ -89,6 +94,8 @@ const T = {
     curveH: "Who these interests actually attract, by age", plan: "plan",
     realH: "The persona these interests really describe", mostly: (a, f) => `Mostly <b>${a}</b>${f !== undefined ? `, about <b>${f}% female</b>` : ""}. `, alsoLike: "This taste mix also over-indexes on:",
     didH: "What the agent did",
+    fixH: "Corrected persona, re-checked by the agent", before: "your persona", after: "corrected", changes: "What the agent changed",
+    useIt: "Paste this into your plan", copyLine: "Copy", nextH: "What to do next",
   },
   ja: {
     tagline: "事業計画書の「ターゲット客」を貼ると、AI エージェントが Qloo の好みデータで、その人たちが本当にいるかを確かめます。",
@@ -99,7 +106,7 @@ const T = {
     foot: "Qloo の結果は多くの人の好みの傾向であり、特定の個人についての判断ではありません。サンプルモードのデータはデモ用の手作りで Qloo のデータではありません。QLOO_API_KEY を設定すると、すべての数字が Qloo Taste AI™ API から来ます。",
     live: "本番：Qloo Taste AI", sample: "サンプルデータ（Qloo ではありません）", llm: "計画の読み取りと講評：", knows: "サンプルモードで使える名前：",
     working: "エージェントが確認中です…",
-    steps: ["計画書を読んで想定客を取り出す", "ブランド・作品・場所を Qloo で探す", "それぞれのファンの年齢と性別を Qloo に聞く", "好きなもの同士のファンが重なるか確かめる", "計画が見込むブランドが合うか確かめる", "講評メモを書く"],
+    steps: ["計画書を読んで想定客を取り出す", "ブランド・作品・場所を Qloo で探す", "それぞれのファンの年齢と性別を Qloo に聞く", "好きなもの同士のファンが重なるか確かめる", "計画が見込むブランドが合うか確かめる", "講評メモを書く", "修正版の想定客を作って、もう一度確かめる"],
     good: "実在しそうな客層です", warn: "一部は実在しそう：赤い指摘を確認", bad: "たぶん願望で、実在の客ではありません",
     read: "計画書から読み取った想定客", anyGender: "性別指定なし", into2: "好きなもの", assumed2: "見込んでいるもの",
     copy: "レポートをコピー", copied: "コピーしました", scoreNote: (n) => `100点満点の実在スコア。下の数字はすべて Qloo Taste AI への ${n} 種類の問い合わせ結果です。`, scoreSample: "100点満点の実在スコア。サンプルデータで、Qloo のデータではありません。",
@@ -110,6 +117,8 @@ const T = {
     curveH: "この好きなものが実際に好かれている年齢層", plan: "計画",
     realH: "この好みの組み合わせが本当に表している客層", mostly: (a, f) => `中心は <b>${jaAge(a)}</b>${f !== undefined ? `、女性は約 <b>${f}%</b>` : ""}。`, alsoLike: "この層がほかに好むもの：",
     didH: "エージェントがしたこと",
+    fixH: "エージェントが作った修正版の想定客（再チェック済み）", before: "仮説", after: "修正版", changes: "変えたところ",
+    useIt: "計画書にはこう書く", copyLine: "コピー", nextH: "次にやること",
   },
 };
 let lang = new URLSearchParams(location.search).get("lang") === "ja" ? "ja" : (() => { try { return localStorage.getItem("lang") === "ja" ? "ja" : "en"; } catch { return "en"; } })();
@@ -194,7 +203,7 @@ const ageText = (p) => { const l = agesOf(p); if (l.length === 1) return l[0]; c
 const jaAge = (l) => (l.startsWith("≤") ? `${l.slice(1)}歳以下` : l.endsWith("+") ? `${l.slice(0, -1)}歳以上` : `${l.replace("–", "〜")}歳`);
 const tx = (f) => (lang === "ja" && f.ja ? f.ja : f.text);
 
-function render({ extracted, result: d, memo }, animate = true) {
+function render({ extracted, result: d, memo, revision: rv, next }, animate = true) {
   const verdict = d.score >= 70 ? ["good", t("good")] : d.score >= 50 ? ["warn", t("warn")] : ["bad", t("bad")];
   const color = { good: "var(--good)", warn: "var(--warn)", bad: "var(--bad)" }[verdict[0]];
   const order = { bad: 0, warn: 1, ok: 2 };
@@ -222,6 +231,11 @@ function render({ extracted, result: d, memo }, animate = true) {
     <div class="parts">${Object.entries(t("parts")).map(([k, l]) =>
       `<div><b style="color:${d.parts[k] >= 70 ? "var(--good)" : d.parts[k] >= 50 ? "var(--warn)" : "var(--bad)"}">${d.parts[k]}</b><span class="sub">${l}</span></div>`).join("")}</div>
     <div class="memo"><b>${t("memo")}</b><div>${esc(lang === "ja" && memo.ja ? memo.ja : memo.text)}</div><div class="sub" style="margin-top:4px">${esc(t("by")(memo.by))}</div></div>
+    ${rv ? `<div class="fix"><h3>${t("fixH")}</h3>
+      <div class="arrow"><div>${d.score} <span>${t("before")}</span></div>→<div style="color:${rv.score >= 70 ? "var(--good)" : rv.score >= 50 ? "var(--warn)" : "var(--bad)"}">${rv.score} <span>${t("after")}</span></div></div>
+      <div class="sub" style="margin-top:6px">${t("changes")}</div><ul>${rv.changes.map((c) => `<li>${esc(lang === "ja" ? c.ja : c.en)}</li>`).join("")}</ul>
+      <div class="sentence"><b>${t("useIt")}</b> <button type="button" class="ghost" id="copyLine" style="float:right;padding:3px 10px;font-size:12px">${t("copyLine")}</button><div style="margin-top:4px">${esc(lang === "ja" ? rv.sentence.ja : rv.sentence.en)}</div></div></div>` : ""}
+    ${next?.length ? `<div class="next"><h3>${t("nextH")}</h3><ol>${next.map((x) => `<li>${esc(lang === "ja" ? x.ja : x.en)}</li>`).join("")}</ol></div>` : ""}
     <h3 style="margin-top:16px">${t("findings")}</h3>
     ${flags.map((f) => `<div class="flag ${f.level === "bad" ? "" : f.level}">${esc(tx(f))}</div>`).join("") || `<div class="flag ok">${t("none")}</div>`}
     ${d.unknown?.length ? `<div class="flag warn">${t("notFound")}${esc(d.unknown.join(", "))}</div>` : ""}
@@ -244,6 +258,7 @@ function render({ extracted, result: d, memo }, animate = true) {
     const count = (now) => { const k = Math.min(1, (now - t0) / 1100); $("num").textContent = Math.round(d.score * (1 - (1 - k) ** 3)); if (k < 1) requestAnimationFrame(count); };
     requestAnimationFrame(count);
   } else { ring.style.transition = "none"; ring.style.strokeDashoffset = 301.6 * (1 - d.score / 100); $("num").textContent = d.score; }
+  if (rv) $("copyLine").onclick = () => navigator.clipboard.writeText(lang === "ja" ? rv.sentence.ja : rv.sentence.en).then(() => { $("copyLine").textContent = t("copied"); setTimeout(() => ($("copyLine").textContent = t("copyLine")), 1500); });
   $("copy").onclick = () => navigator.clipboard.writeText(report(last)).then(() => { $("copy").textContent = t("copied"); setTimeout(() => ($("copy").textContent = t("copy")), 1500); });
 }
 
@@ -253,6 +268,8 @@ function report({ result: d, memo }) {
   const lines = [`Persona Reality Check: ${d.score}/100`, `Persona: ${ageText(p)}, ${p.gender === "any" ? "any gender" : p.gender}${p.location ? ", " + p.location : ""}; into ${p.interests.join(", ")}${p.assumes.length ? "; assumed to like " + p.assumes.join(", ") : ""}`, "",
     `Memo: ${lang === "ja" && memo.ja ? memo.ja : memo.text}`, "", "Findings:", ...d.flags.map((f) => `- [${f.level === "bad" ? "RED" : f.level === "warn" ? "AMBER" : "OK"}] ${tx(f)}`)];
   if (d.realistic?.age) lines.push("", `The real audience: mostly ${d.realistic.age}${d.realistic.female !== undefined ? `, about ${d.realistic.female}% female` : ""}; also into ${(d.realistic.alsoLike || []).map((x) => x.name).join(", ")}`);
+  if (last.revision) lines.push("", `Corrected persona (re-checked): ${d.score} -> ${last.revision.score}`, ...last.revision.changes.map((c) => `- ${lang === "ja" ? c.ja : c.en}`), lang === "ja" ? last.revision.sentence.ja : last.revision.sentence.en);
+  if (last.next?.length) lines.push("", "Next:", ...last.next.map((x) => `- ${lang === "ja" ? x.ja : x.en}`));
   lines.push("", `Source: ${d.mode === "live" ? "Qloo Taste AI API" : "sample data (not Qloo)"}. Aggregate taste patterns, not individuals.`);
   return lines.join("\n");
 }

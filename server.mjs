@@ -1,9 +1,32 @@
 // Persona Reality Check server. Zero dependencies: node server.mjs
 import { serve } from "./lib/serve.mjs";
-import { analyze, normalize } from "./lib/analyze.mjs";
+import { analyze, normalize, revise, agesLabel, jaAge } from "./lib/analyze.mjs";
 import { qlooEnabled, recentCalls } from "./lib/qloo.mjs";
 import { catalog } from "./lib/sample-taste.mjs";
 import { extractPersona, writeMemo, llmEnabled, llmModel } from "./lib/llm.mjs";
+
+// One line a planner can paste into the plan, in English and Japanese.
+function sentence(p, r) {
+  const g = { any: ["", ""], female: [" women", "女性"], male: [" men", "男性"] }[p.gender];
+  const also = (r.realistic.alsoLike || []).slice(0, 3).map((x) => x.name);
+  return {
+    en: `Target customer:${g[0]} aged ${agesLabel(p.ages)}${p.location ? ` in ${p.location}` : ""} who are into ${p.interests.join(", ")}${p.assumes.length ? `, and also like ${p.assumes.join(", ")}` : ""}.${also.length ? ` The same people over-index on ${also.join(", ")}.` : ""}`,
+    ja: `ターゲット：${p.location ? `${p.location}の` : ""}${jaAge(agesLabel(p.ages))}${g[1] ? `の${g[1]}` : ""}で、${p.interests.join("、")}が好きな人${p.assumes.length ? `。${p.assumes.join("、")}も好む` : ""}。${also.length ? `同じ層は ${also.join("、")} もよく好む。` : ""}`,
+  };
+}
+
+// What to do with the corrected persona: concrete, Qloo-backed next moves.
+function nextSteps(r) {
+  const fits = r.assumed?.filter((a) => a.affinity !== null && a.affinity >= (r.thresholds?.assume ?? 0.5)).map((a) => a.name) || [];
+  const partners = [...new Set([...fits, ...(r.realistic.alsoLike || []).map((x) => x.name)])].slice(0, 4);
+  const p = r.persona;
+  return [
+    partners.length && { en: `Partner, sponsor or co-promote with: ${partners.join(", ")}. Their fans overlap with this persona.`, ja: `提携・スポンサー・共同企画の候補：${partners.join("、")}。この想定客とファンが重なります。` },
+    { en: `Use ${p.interests.slice(0, 2).join(" and ")} in your copy, visuals and content: they are what these people share.`, ja: `宣伝文・画像・コンテンツでは ${p.interests.slice(0, 2).join(" と ")} を使う：この人たちの共通点です。` },
+    { en: `Target ads and outreach at ages ${agesLabel(p.ages)}${p.gender !== "any" ? `, ${p.gender}` : ""}.`, ja: `広告や声かけの対象は ${jaAge(agesLabel(p.ages))}${p.gender !== "any" ? `・${p.gender === "female" ? "女性" : "男性"}` : ""}に絞る。` },
+    { en: "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.", ja: "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。" },
+  ].filter(Boolean);
+}
 
 serve({
   name: "Persona Reality Check",
@@ -32,7 +55,18 @@ serve({
       const result = await analyze(normalize(persona));
       const memo = await writeMemo(result.persona, result);
       result.steps = [...steps, ...result.steps, `Wrote the reviewer memo (${memo.by})`];
-      return { extracted, result, memo };
+      // Agent loop, step 2: build a corrected persona from the evidence and check it again.
+      let revision = null;
+      const fix = revise(result.persona, result);
+      if (fix.changes.length) {
+        const again = await analyze(fix.persona).catch(() => null);
+        if (again) {
+          revision = { persona: again.persona, changes: fix.changes, score: again.score, parts: again.parts, flags: again.flags, alsoLike: again.realistic.alsoLike, sentence: sentence(again.persona, again) };
+          result.steps.push(`Built a corrected persona (${fix.changes.length} changes) and re-checked it with Qloo: ${result.score} → ${again.score}`);
+        }
+      }
+      const next = nextSteps(revision ? { ...result, persona: revision.persona, realistic: { ...result.realistic, alsoLike: revision.alsoLike } } : result);
+      return { extracted, result, memo, revision, next };
     },
   },
 });
