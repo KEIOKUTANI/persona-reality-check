@@ -20,41 +20,43 @@ textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);b
 .loading li.on::marker{content:"● "}.loading li.done{color:var(--good)}.loading li.done::marker{content:"✓ "}
 .fade{animation:fade .45s ease both}@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .powered{font-size:11px;color:var(--muted);margin-top:4px}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-right:8px;vertical-align:middle}
+.lang button{background:none;color:var(--muted);padding:3px 10px;font-size:12px;border-radius:0}.lang button[aria-pressed=true]{background:var(--accent);color:#fff}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div><h1>Persona Reality Check</h1><div class="sub">Paste the target customer from your business plan. An agent checks it against Qloo's taste data and tells you if these people really exist.</div></div>
-    <div style="text-align:right"><span id="mode" class="badge">…</span><div class="powered" id="llm"></div></div>
+    <div><h1>Persona Reality Check</h1><div class="sub" data-i18n="tagline"></div></div>
+    <div style="text-align:right"><span class="lang"><button type="button" id="lEn">English</button><button type="button" id="lJa">日本語</button></span><span id="mode" class="badge">…</span><div class="powered" id="llm"></div></div>
   </header>
   <div class="grid">
     <div class="card">
-      <div class="tabs" role="tablist"><button type="button" id="tText" aria-selected="true">Paste plan text</button><button type="button" id="tForm" aria-selected="false">Fill in a form</button></div>
+      <div class="tabs" role="tablist"><button type="button" id="tText" aria-selected="true" data-i18n="tabText"></button><button type="button" id="tForm" aria-selected="false" data-i18n="tabForm"></button></div>
       <div class="presets" id="presets"></div>
       <form id="fText">
-        <label for="text">Target customer, as written in the plan (any language)</label>
+        <label for="text" data-i18n="textLabel"></label>
         <textarea id="text"></textarea>
-        <div style="margin-top:12px"><button>Check this persona</button></div>
+        <div style="margin-top:12px"><button data-i18n="check"></button></div>
       </form>
       <form id="fForm" hidden>
         <div class="row">
-          <div><label>Age</label><select id="age">
+          <div><label data-i18n="age"></label><select id="age">
             <option value="24_and_younger">≤24</option><option value="25_to_29">25–29</option><option value="30_to_34">30–34</option>
             <option value="35_to_44">35–44</option><option value="45_to_54">45–54</option><option value="55_and_older">55+</option></select></div>
-          <div><label>Gender</label><select id="gender"><option value="any">Any</option><option value="female">Female</option><option value="male">Male</option></select></div>
+          <div><label data-i18n="gender"></label><select id="gender"><option value="any" data-i18n="any"></option><option value="female" data-i18n="female"></option><option value="male" data-i18n="male"></option></select></div>
         </div>
-        <label>Location (optional)</label><input id="location" placeholder="e.g. Sapporo">
-        <label>They are into (2–4, comma separated)</label><input id="interests" list="cat">
-        <label>So the plan assumes they also like (up to 3)</label><input id="assumes" list="cat">
-        <div style="margin-top:12px"><button>Check this persona</button></div>
+        <label data-i18n="location"></label><input id="location" placeholder="Sapporo">
+        <label data-i18n="into"></label><input id="interests" list="cat">
+        <label data-i18n="assumes"></label><input id="assumes" list="cat">
+        <div style="margin-top:12px"><button data-i18n="check"></button></div>
       </form>
       <datalist id="cat"></datalist>
       <p class="sub" id="known"></p>
     </div>
-    <div id="out" class="card"><div class="empty">Pick an example or paste your own persona, then press “Check this persona”.</div></div>
+    <div id="out" class="card"><div class="empty" data-i18n="empty"></div></div>
   </div>
-  <div class="foot">Qloo results describe aggregate taste patterns, not individuals. In sample mode the taste data is hand-made for the demo and is not Qloo data; with QLOO_API_KEY set, every number comes from the Qloo Taste AI™ API.</div>
+  <div class="foot" data-i18n="foot"></div>
 </div>
 <script>
 const EXAMPLES = {
@@ -65,14 +67,69 @@ const EXAMPLES = {
   "Outdoor gear shop": { text: "Our customers are hikers aged 35-44 who already own Snow Peak, Patagonia and The North Face gear. We expect them to also buy Arc'teryx and MUJI.",
     persona: { age: "35_to_44", gender: "any", location: "", interests: ["Snow Peak", "Patagonia", "The North Face"], assumes: ["Arc'teryx", "MUJI"] } },
 };
+// Page language. English by default (judges); 日本語 for Japanese advisors. Remembered per browser, or ?lang=ja.
+const T = {
+  en: {
+    tagline: "Paste the target customer from your business plan. An agent checks it against Qloo's taste data and tells you if these people really exist.",
+    tabText: "Paste plan text", tabForm: "Fill in a form", textLabel: "Target customer, as written in the plan (any language)", check: "Check this persona",
+    age: "Age", gender: "Gender", any: "Any", female: "Female", male: "Male", location: "Location (optional)",
+    into: "They are into (2–4, comma separated)", assumes: "So the plan assumes they also like (up to 3)",
+    empty: "Pick an example or paste your own persona, then press “Check this persona”.",
+    foot: "Qloo results describe aggregate taste patterns, not individuals. In sample mode the taste data is hand-made for the demo and is not Qloo data; with QLOO_API_KEY set, every number comes from the Qloo Taste AI™ API.",
+    live: "Live: Qloo Taste AI", sample: "Sample data (not Qloo)", llm: "Plan reading and memo: ", knows: "Sample mode knows only: ",
+    working: "The agent is working…",
+    steps: ["Reading the plan and pulling out the persona", "Finding each brand, title and place in Qloo", "Asking Qloo who each audience really is (age, gender)", "Checking whether the interests share fans", "Testing the brands the plan assumes", "Writing the reviewer memo"],
+    good: "Looks like real people", warn: "Partly real: check the red flags", bad: "Probably a wish, not a customer",
+    read: "The agent read this persona from your plan", anyGender: "any gender", into2: "into", assumed2: "assumed to like",
+    copy: "Copy report", copied: "Copied", scoreNote: (n) => `Reality score out of 100. Every number below comes from ${n} live Qloo Taste AI checks.`, scoreSample: "Reality score out of 100. Sample data, not Qloo.",
+    parts: { age: "Age fit", gender: "Gender fit", coherence: "Interests cohere", assumptions: "Assumptions hold" },
+    memo: "Reviewer memo", by: (b) => `Written by ${b} from the evidence below.`, findings: "Findings", none: "No contradictions found.", notFound: "Not found, so not checked: ",
+    pairsH: "Do the interests belong to the same people?", pair: "Pair", affinity: "Affinity", assumedH: "Brands the plan assumes", brand: "Brand", fit: "Fit", noneGiven: "None given.",
+    na: "Not scored: Qloo has no pairwise affinity for general hobby tags",
+    curveH: "Who these interests actually attract, by age", plan: "plan",
+    realH: "The persona these interests really describe", mostly: (a, f) => `Mostly <b>${a}</b>${f !== undefined ? `, about <b>${f}% female</b>` : ""}. `, alsoLike: "This taste mix also over-indexes on:",
+    didH: "What the agent did",
+  },
+  ja: {
+    tagline: "事業計画書の「ターゲット客」を貼ると、AI エージェントが Qloo の好みデータで、その人たちが本当にいるかを確かめます。",
+    tabText: "文章を貼る", tabForm: "項目で入力", textLabel: "計画書に書いたターゲット客の文章（日本語・英語どちらでも）", check: "この想定客を確かめる",
+    age: "年齢", gender: "性別", any: "指定なし", female: "女性", male: "男性", location: "地域（任意）",
+    into: "好きなもの（2〜4個、カンマ区切り）", assumes: "だから計画が「これも好きなはず」と見込むもの（3個まで）",
+    empty: "左の例を押すか、計画書の文章を貼って「この想定客を確かめる」を押してください。",
+    foot: "Qloo の結果は多くの人の好みの傾向であり、特定の個人についての判断ではありません。サンプルモードのデータはデモ用の手作りで Qloo のデータではありません。QLOO_API_KEY を設定すると、すべての数字が Qloo Taste AI™ API から来ます。",
+    live: "本番：Qloo Taste AI", sample: "サンプルデータ（Qloo ではありません）", llm: "計画の読み取りと講評：", knows: "サンプルモードで使える名前：",
+    working: "エージェントが確認中です…",
+    steps: ["計画書を読んで想定客を取り出す", "ブランド・作品・場所を Qloo で探す", "それぞれのファンの年齢と性別を Qloo に聞く", "好きなもの同士のファンが重なるか確かめる", "計画が見込むブランドが合うか確かめる", "講評メモを書く"],
+    good: "実在しそうな客層です", warn: "一部は実在しそう：赤い指摘を確認", bad: "たぶん願望で、実在の客ではありません",
+    read: "計画書から読み取った想定客", anyGender: "性別指定なし", into2: "好きなもの", assumed2: "見込んでいるもの",
+    copy: "レポートをコピー", copied: "コピーしました", scoreNote: (n) => `100点満点の実在スコア。下の数字はすべて Qloo Taste AI への ${n} 種類の問い合わせ結果です。`, scoreSample: "100点満点の実在スコア。サンプルデータで、Qloo のデータではありません。",
+    parts: { age: "年齢の合い方", gender: "性別の合い方", coherence: "好みのまとまり", assumptions: "見込みの当たり" },
+    memo: "講評メモ", by: (b) => `下の根拠をもとに${/^template/.test(b) ? "テンプレート" : b}で作成`, findings: "指摘", none: "矛盾は見つかりませんでした。", notFound: "見つからなかったので確かめていないもの：",
+    pairsH: "好きなもの同士、同じ人たちに好かれている？", pair: "組み合わせ", affinity: "相性", assumedH: "計画が見込んでいるブランド", brand: "ブランド", fit: "相性", noneGiven: "ありません。",
+    na: "対象外：一般的な趣味（タグ）同士の相性は Qloo にありません",
+    curveH: "この好きなものが実際に好かれている年齢層", plan: "計画",
+    realH: "この好みの組み合わせが本当に表している客層", mostly: (a, f) => `中心は <b>${jaAge(a)}</b>${f !== undefined ? `、女性は約 <b>${f}%</b>` : ""}。`, alsoLike: "この層がほかに好むもの：",
+    didH: "エージェントがしたこと",
+  },
+};
+let lang = new URLSearchParams(location.search).get("lang") === "ja" ? "ja" : (() => { try { return localStorage.getItem("lang") === "ja" ? "ja" : "en"; } catch { return "en"; } })();
+const t = (k) => T[lang][k];
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
+  $("lEn").setAttribute("aria-pressed", lang === "en"); $("lJa").setAttribute("aria-pressed", lang === "ja");
+  if (cfg) showConfig();
+  if (last) render(last, false);
+}
+const setLang = (l) => { lang = l; try { localStorage.setItem("lang", l); } catch {} applyLang(); };
+let cfg = null;
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const split = (s) => s.split(",").map((x) => x.trim()).filter(Boolean);
 const AGE = { "24_and_younger": "≤24", "25_to_29": "25–29", "30_to_34": "30–34", "35_to_44": "35–44", "45_to_54": "45–54", "55_and_older": "55+" };
 // Colour against the same bar the scorer uses (live Qloo affinities sit higher than sample data).
-const pill = (a, min) => a === null || a === undefined ? '<span class="pill" title="Not scored: Qloo has no pairwise affinity for general hobby tags">n/a</span>'
+const pill = (a, min) => a === null || a === undefined ? `<span class="pill" title="${t("na")}">n/a</span>`
   : `<span class="pill ${a >= min ? "good" : a >= min - 0.05 ? "warn" : "bad"}">${Math.round(a * 100)}</span>`;
-const STEPS = ["Reading the plan and pulling out the persona", "Finding each brand, title and place in Qloo", "Asking Qloo who each audience really is (age, gender)", "Checking whether the interests share fans", "Testing the brands the plan assumes", "Writing the reviewer memo"];
 let last = null;
 let tab = "text";
 
@@ -94,15 +151,19 @@ for (const [name, ex] of Object.entries(EXAMPLES)) {
   $("presets").appendChild(b);
 }
 
-fetch("/api/config").then((r) => r.json()).then((c) => {
-  $("mode").textContent = c.mode === "live" ? "Live: Qloo Taste AI" : "Sample data (not Qloo)";
+function showConfig() {
+  const c = cfg;
+  $("mode").textContent = c.mode === "live" ? t("live") : t("sample");
   $("mode").className = "badge" + (c.mode === "live" ? "" : " sample");
-  $("llm").textContent = c.llm ? `Plan reading and memo: ${c.llm}` : "";
+  $("llm").textContent = c.llm ? t("llm") + c.llm : "";
   if (c.mode !== "live") {
     $("cat").innerHTML = c.catalog.map((e) => `<option value="${esc(e.name)}">`).join("");
-    $("known").textContent = "Sample mode knows only: " + c.catalog.map((e) => e.name).join(", ");
+    $("known").textContent = t("knows") + c.catalog.map((e) => e.name).join(", ");
   }
-});
+}
+fetch("/api/config").then((r) => r.json()).then((c) => { cfg = c; showConfig(); });
+$("lEn").onclick = () => setLang("en"); $("lJa").onclick = () => setLang("ja");
+applyLang();
 
 $("fText").onsubmit = (e) => { e.preventDefault(); run(); };
 $("fForm").onsubmit = (e) => { e.preventDefault(); run(); };
@@ -110,7 +171,7 @@ $("fForm").onsubmit = (e) => { e.preventDefault(); run(); };
 async function run() {
   document.querySelectorAll("form button").forEach((b) => (b.disabled = true));
   const skip = tab === "form" ? 1 : 0;
-  $("out").innerHTML = `<div class="loading"><h3>The agent is working…</h3><ol>${STEPS.slice(skip).map((t) => `<li>${t}</li>`).join("")}</ol></div>`;
+  $("out").innerHTML = `<div class="loading"><h3>${t("working")}</h3><ol>${t("steps").slice(skip).map((t) => `<li>${t}</li>`).join("")}</ol></div>`;
   const lis = [...$("out").querySelectorAll(".loading li")];
   let i = 0; lis[0].className = "on";
   const tick = setInterval(() => { if (i < lis.length - 1) { lis[i].className = "done"; lis[++i].className = "on"; } }, 1400);
@@ -126,60 +187,71 @@ async function run() {
   document.querySelectorAll("form button").forEach((b) => (b.disabled = false));
 }
 
-function render({ extracted, result: d, memo }) {
-  const verdict = d.score >= 70 ? ["good", "Looks like real people"] : d.score >= 50 ? ["warn", "Partly real: check the red flags"] : ["bad", "Probably a wish, not a customer"];
+// Plan age as a label: one band ("25–29") or a range across bands ("25–34").
+const agesOf = (p) => (p.ages && p.ages.length ? p.ages : [p.age]).map((a) => AGE[a]);
+const ageText = (p) => { const l = agesOf(p); if (l.length === 1) return l[0]; const a = l[0], b = l[l.length - 1];
+  return a.startsWith("≤") ? `≤${b.split("–").pop()}` : b.endsWith("+") ? `${a.split("–")[0]}+` : `${a.split("–")[0]}–${b.split("–").pop()}`; };
+const jaAge = (l) => (l.startsWith("≤") ? `${l.slice(1)}歳以下` : l.endsWith("+") ? `${l.slice(0, -1)}歳以上` : `${l.replace("–", "〜")}歳`);
+const tx = (f) => (lang === "ja" && f.ja ? f.ja : f.text);
+
+function render({ extracted, result: d, memo }, animate = true) {
+  const verdict = d.score >= 70 ? ["good", t("good")] : d.score >= 50 ? ["warn", t("warn")] : ["bad", t("bad")];
   const color = { good: "var(--good)", warn: "var(--warn)", bad: "var(--bad)" }[verdict[0]];
   const order = { bad: 0, warn: 1, ok: 2 };
   const flags = [...d.flags].sort((a, b) => order[a.level] - order[b.level]);
   const p = d.persona;
-  const curve = d.ageCurve ? `<h3 style="margin-top:16px">Who these interests actually attract, by age</h3>
+  const planBands = agesOf(p);
+  const curve = d.ageCurve ? `<h3 style="margin-top:16px">${t("curveH")}</h3>
     <div style="display:flex;gap:6px;align-items:flex-end;height:84px">${d.ageCurve.map((a) => `<div style="flex:1;text-align:center">
-      <div style="height:${Math.round(8 + Math.max(-1, Math.min(1, a.skew)) * 30 + 30)}px;background:${a.age === AGE[p.age] ? "var(--warn)" : a.skew > 0 ? "var(--accent)" : "var(--line)"};border-radius:4px 4px 0 0"></div>
-      <div class="sub">${esc(a.age)}${a.age === AGE[p.age] ? " ◀ plan" : ""}</div></div>`).join("")}</div>` : "";
+      <div style="height:${Math.round(8 + Math.max(-1, Math.min(1, a.skew)) * 30 + 30)}px;background:${planBands.includes(a.age) ? "var(--warn)" : a.skew > 0 ? "var(--accent)" : "var(--line)"};border-radius:4px 4px 0 0"></div>
+      <div class="sub">${esc(a.age)}${planBands.includes(a.age) ? ` ◀ ${t("plan")}` : ""}</div></div>`).join("")}</div>` : "";
   const rp = d.realistic || {};
   const th = d.thresholds || { pair: 0.45, assume: 0.5 };
   $("out").innerHTML = `<div class="fade">
-    ${extracted ? `<h3>The agent read this persona from your plan</h3>
-      <div class="sub">${AGE[p.age]} · ${p.gender === "any" ? "any gender" : p.gender}${p.location ? " · " + esc(p.location) : ""} · into <b>${esc(p.interests.join(", "))}</b>${p.assumes.length ? ` · assumed to like <b>${esc(p.assumes.join(", "))}</b>` : ""}</div>
+    ${extracted ? `<h3>${t("read")}</h3>
+      <div class="sub">${lang === "ja" ? jaAge(ageText(p)) : ageText(p)} · ${p.gender === "any" ? t("anyGender") : t(p.gender)}${p.location ? " · " + esc(p.location) : ""} · ${t("into2")} <b>${esc(p.interests.join(", "))}</b>${p.assumes.length ? ` · ${t("assumed2")} <b>${esc(p.assumes.join(", "))}</b>` : ""}</div>
       ${extracted.quote ? `<div class="quote">“${esc(extracted.quote)}”</div>` : ""}<hr style="border:0;border-top:1px solid var(--line);margin:12px 0">` : ""}
-    <div class="tools"><button type="button" class="ghost" id="copy">Copy report</button></div>
+    <div class="tools"><button type="button" class="ghost" id="copy">${t("copy")}</button></div>
     <div class="hero">
       <div class="ring"><svg width="112" height="112"><circle cx="56" cy="56" r="48" fill="none" stroke="var(--line)" stroke-width="10"/>
         <circle class="v" cx="56" cy="56" r="48" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="301.6"/></svg>
         <div class="score" style="color:${color}" id="num">0</div></div>
       <div style="flex:1"><div class="verdict" style="color:${color}">${verdict[1]}</div>
-        <div class="sub" style="margin-top:4px">Reality score out of 100. ${d.mode === "live" ? `Every number below comes from ${d.steps.filter((s) => /^Qloo/.test(s)).length} live Qloo Taste AI checks.` : "Sample data, not Qloo."}</div></div>
+        <div class="sub" style="margin-top:4px">${d.mode === "live" ? t("scoreNote")(d.steps.filter((s) => /^Qloo/.test(s)).length) : t("scoreSample")}</div></div>
     </div>
-    <div class="parts">${[["age", "Age fit"], ["gender", "Gender fit"], ["coherence", "Interests cohere"], ["assumptions", "Assumptions hold"]].map(([k, l]) =>
+    <div class="parts">${Object.entries(t("parts")).map(([k, l]) =>
       `<div><b style="color:${d.parts[k] >= 70 ? "var(--good)" : d.parts[k] >= 50 ? "var(--warn)" : "var(--bad)"}">${d.parts[k]}</b><span class="sub">${l}</span></div>`).join("")}</div>
-    <div class="memo"><b>Reviewer memo</b><div>${esc(memo.text)}</div><div class="sub" style="margin-top:4px">Written by ${esc(memo.by)} from the evidence below.</div></div>
-    <h3 style="margin-top:16px">Findings</h3>
-    ${flags.map((f) => `<div class="flag ${f.level === "bad" ? "" : f.level}">${esc(f.text)}</div>`).join("") || '<div class="flag ok">No contradictions found.</div>'}
-    ${d.unknown?.length ? `<div class="flag warn">Not found, so not checked: ${esc(d.unknown.join(", "))}</div>` : ""}
+    <div class="memo"><b>${t("memo")}</b><div>${esc(lang === "ja" && memo.ja ? memo.ja : memo.text)}</div><div class="sub" style="margin-top:4px">${esc(t("by")(memo.by))}</div></div>
+    <h3 style="margin-top:16px">${t("findings")}</h3>
+    ${flags.map((f) => `<div class="flag ${f.level === "bad" ? "" : f.level}">${esc(tx(f))}</div>`).join("") || `<div class="flag ok">${t("none")}</div>`}
+    ${d.unknown?.length ? `<div class="flag warn">${t("notFound")}${esc(d.unknown.join(", "))}</div>` : ""}
     <div class="row" style="margin-top:12px;align-items:flex-start;flex-wrap:wrap">
-      <div><h3>Do the interests belong to the same people?</h3>
-        <table><tr><th>Pair</th><th class="num">Affinity</th></tr>${d.pairs.map((x) => `<tr><td>${esc(x.a)} × ${esc(x.b)}</td><td class="num">${pill(x.affinity, th.pair)}</td></tr>`).join("")}</table></div>
-      <div><h3>Brands the plan assumes</h3>
-        ${d.assumed.length ? `<table><tr><th>Brand</th><th class="num">Fit</th></tr>${d.assumed.map((a) => `<tr><td>${esc(a.name)}</td><td class="num">${pill(a.affinity, th.assume)}</td></tr>`).join("")}</table>` : '<div class="sub">None given.</div>'}</div>
+      <div><h3>${t("pairsH")}</h3>
+        <table><tr><th>${t("pair")}</th><th class="num">${t("affinity")}</th></tr>${d.pairs.map((x) => `<tr><td>${esc(x.a)} × ${esc(x.b)}</td><td class="num">${pill(x.affinity, th.pair)}</td></tr>`).join("")}</table></div>
+      <div><h3>${t("assumedH")}</h3>
+        ${d.assumed.length ? `<table><tr><th>${t("brand")}</th><th class="num">${t("fit")}</th></tr>${d.assumed.map((a) => `<tr><td>${esc(a.name)}</td><td class="num">${pill(a.affinity, th.assume)}</td></tr>`).join("")}</table>` : `<div class="sub">${t("noneGiven")}</div>`}</div>
     </div>
     ${curve}
-    <h3 style="margin-top:16px">The persona these interests really describe</h3>
-    <div class="flag ok">${rp.age ? `Mostly <b>${esc(rp.age)}</b>${rp.female !== undefined ? `, about <b>${rp.female}% female</b>` : ""}. ` : ""}This taste mix also over-indexes on:
+    <h3 style="margin-top:16px">${t("realH")}</h3>
+    <div class="flag ok">${rp.age ? t("mostly")(esc(rp.age), rp.female) : ""}${t("alsoLike")}
       <span class="chips">${(rp.alsoLike || []).map((x) => `<span class="pill good">${esc(x.name)}</span>`).join(" ")}</span></div>
-    <h3 style="margin-top:16px">What the agent did</h3>
+    <h3 style="margin-top:16px">${t("didH")}</h3>
     <ol class="steps">${d.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></div>`;
-  requestAnimationFrame(() => requestAnimationFrame(() => { $("out").querySelector("circle.v").style.strokeDashoffset = 301.6 * (1 - d.score / 100); }));
-  const t0 = performance.now();
-  const count = (t) => { const k = Math.min(1, (t - t0) / 1100); $("num").textContent = Math.round(d.score * (1 - (1 - k) ** 3)); if (k < 1) requestAnimationFrame(count); };
-  requestAnimationFrame(count);
-  $("copy").onclick = () => navigator.clipboard.writeText(report(last)).then(() => { $("copy").textContent = "Copied"; setTimeout(() => ($("copy").textContent = "Copy report"), 1500); });
+  const ring = $("out").querySelector("circle.v");
+  if (animate) {
+    requestAnimationFrame(() => requestAnimationFrame(() => { ring.style.strokeDashoffset = 301.6 * (1 - d.score / 100); }));
+    const t0 = performance.now();
+    const count = (now) => { const k = Math.min(1, (now - t0) / 1100); $("num").textContent = Math.round(d.score * (1 - (1 - k) ** 3)); if (k < 1) requestAnimationFrame(count); };
+    requestAnimationFrame(count);
+  } else { ring.style.transition = "none"; ring.style.strokeDashoffset = 301.6 * (1 - d.score / 100); $("num").textContent = d.score; }
+  $("copy").onclick = () => navigator.clipboard.writeText(report(last)).then(() => { $("copy").textContent = t("copied"); setTimeout(() => ($("copy").textContent = t("copy")), 1500); });
 }
 
 // Plain-text report an advisor can paste into a review comment or email.
 function report({ result: d, memo }) {
   const p = d.persona;
-  const lines = [`Persona Reality Check: ${d.score}/100`, `Persona: ${AGE[p.age]}, ${p.gender === "any" ? "any gender" : p.gender}${p.location ? ", " + p.location : ""}; into ${p.interests.join(", ")}${p.assumes.length ? "; assumed to like " + p.assumes.join(", ") : ""}`, "",
-    `Memo: ${memo.text}`, "", "Findings:", ...d.flags.map((f) => `- [${f.level === "bad" ? "RED" : f.level === "warn" ? "AMBER" : "OK"}] ${f.text}`)];
+  const lines = [`Persona Reality Check: ${d.score}/100`, `Persona: ${ageText(p)}, ${p.gender === "any" ? "any gender" : p.gender}${p.location ? ", " + p.location : ""}; into ${p.interests.join(", ")}${p.assumes.length ? "; assumed to like " + p.assumes.join(", ") : ""}`, "",
+    `Memo: ${lang === "ja" && memo.ja ? memo.ja : memo.text}`, "", "Findings:", ...d.flags.map((f) => `- [${f.level === "bad" ? "RED" : f.level === "warn" ? "AMBER" : "OK"}] ${tx(f)}`)];
   if (d.realistic?.age) lines.push("", `The real audience: mostly ${d.realistic.age}${d.realistic.female !== undefined ? `, about ${d.realistic.female}% female` : ""}; also into ${(d.realistic.alsoLike || []).map((x) => x.name).join(", ")}`);
   lines.push("", `Source: ${d.mode === "live" ? "Qloo Taste AI API" : "sample data (not Qloo)"}. Aggregate taste patterns, not individuals.`);
   return lines.join("\n");
