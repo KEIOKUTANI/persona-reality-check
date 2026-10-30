@@ -11,7 +11,3 @@ services:
         sync: false
       - key: QLOO_BASE_URL
         value: https://hackathon.api.qloo.com
-      - key: LLM_API_KEY
-        sync: false
-      - key: LLM_MODEL
-        value: nvidia/nemotron-3-super-120b-a12b
