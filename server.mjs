@@ -15,14 +15,16 @@ function sentence(p, r) {
   };
 }
 
-// What to do with the corrected persona: concrete, Qloo-backed next moves.
-function nextSteps(r) {
-  const fits = r.assumed?.filter((a) => a.affinity !== null && a.affinity >= (r.thresholds?.assume ?? 0.5)).map((a) => a.name) || [];
-  const partners = [...new Set([...fits, ...(r.realistic.alsoLike || []).map((x) => x.name)])].slice(0, 4);
+// What to do with the corrected persona: only things Qloo found, never the user's own inputs played back.
+function nextSteps(r, mine) {
+  const own = new Set([...mine.interests, ...mine.assumes].map((n) => n.toLowerCase()));
+  const found = [...new Set([...r.persona.interests, ...(r.realistic.alsoLike || []).map((x) => x.name)])].filter((n) => !own.has(n.toLowerCase()));
+  const partners = found.slice(0, 4);
+  const hooks = found.slice(0, 2);
   const p = r.persona;
   return [
-    partners.length && { en: `Partner, sponsor or co-promote with: ${partners.join(", ")}. Their fans overlap with this persona.`, ja: `提携・スポンサー・共同企画の候補：${partners.join("、")}。この想定客とファンが重なります。` },
-    { en: `Use ${p.interests.slice(0, 2).join(" and ")} in your copy, visuals and content: they are what these people share.`, ja: `宣伝文・画像・コンテンツでは ${p.interests.slice(0, 2).join(" と ")} を使う：この人たちの共通点です。` },
+    partners.length && { en: `Partner, sponsor or co-promote with: ${partners.join(", ")}. Qloo shows these people over-index on them, though your plan didn't name them.`, ja: `提携・広告・共同企画の候補：${partners.join("、")}。計画書には無かったが、この層がよく好むと Qloo が示したものです。` },
+    hooks.length && { en: `Try ${hooks.join(" and ")} as topics, collabs or references in your content and ads, and see which gets more response.`, ja: `${hooks.join(" や ")} をコンテンツや広告のネタ・コラボ・例えに使ってみて、どちらが反応が良いか比べる。` },
     { en: `Target ads and outreach at ages ${agesLabel(p.ages)}${p.gender !== "any" ? `, ${p.gender}` : ""}.`, ja: `広告や声かけの対象は ${jaAge(agesLabel(p.ages))}${p.gender !== "any" ? `・${p.gender === "female" ? "女性" : "男性"}` : ""}に絞る。` },
     { en: "Paste the corrected persona into your plan, then test it with 5–10 real customers before you spend on it.", ja: "修正版の想定客を計画書に貼り、お金をかける前に実際のお客さん5〜10人で確かめる。" },
   ].filter(Boolean);
@@ -64,7 +66,7 @@ serve({
         .sort((a, b) => b.score - a.score);
       const revision = options[0] || null;
       if (options.length) result.steps.push(`Built ${options.length} corrected persona${options.length > 1 ? "s" : ""} and re-checked them with Qloo: ${options.map((o) => o.score).join(", ")} (yours: ${result.score})`);
-      const nextFor = (o) => nextSteps(o ? { ...result, persona: o.persona, realistic: { ...result.realistic, alsoLike: o.alsoLike } } : result);
+      const nextFor = (o) => nextSteps(o ? { ...result, persona: o.persona, realistic: { ...result.realistic, alsoLike: o.alsoLike } } : result, result.persona);
       for (const o of options) o.next = nextFor(o);
       const next = nextFor(revision);
       // Agent loop, step 3: who already wins these people (models to copy) and who competes for them.
