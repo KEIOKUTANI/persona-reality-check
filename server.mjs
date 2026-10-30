@@ -56,15 +56,18 @@ serve({
       const memo = await writeMemo(result.persona, result);
       result.steps = [...steps, ...result.steps, `Wrote the reviewer memo (${memo.by})`];
       // Agent loop, step 2: build a corrected persona from the evidence and check it again.
+      // Two ways to fix it (move the age to the interests, or keep the age and swap the interests): check both, keep the better,
+      // and only show it if it actually beats the user's persona.
       let revision = null;
-      const fix = revise(result.persona, result);
-      if (fix.changes.length) {
-        const again = await analyze(fix.persona).catch(() => null);
-        if (again) {
-          revision = { persona: again.persona, changes: fix.changes, score: again.score, parts: again.parts, flags: again.flags, alsoLike: again.realistic.alsoLike, sentence: sentence(again.persona, again) };
-          result.steps.push(`Built a corrected persona (${fix.changes.length} changes) and re-checked it with Qloo: ${result.score} → ${again.score}`);
-        }
-      }
+      const fixes = [revise(result.persona, result), revise(result.persona, result, { keepAge: true })]
+        .filter((f, i, all) => f.changes.length && all.findIndex((g) => JSON.stringify(g.persona) === JSON.stringify(f.persona)) === i);
+      const checked = await Promise.all(fixes.map((f) => analyze(f.persona).then((again) => ({ fix: f, again })).catch(() => null)));
+      const best = checked.filter(Boolean).sort((a, b) => b.again.score - a.again.score)[0];
+      if (best && best.again.score > result.score) {
+        const { fix, again } = best;
+        revision = { persona: again.persona, changes: fix.changes, score: again.score, parts: again.parts, flags: again.flags, alsoLike: again.realistic.alsoLike, sentence: sentence(again.persona, again) };
+        result.steps.push(`Built ${fixes.length} corrected persona${fixes.length > 1 ? "s" : ""}, re-checked with Qloo and kept the best: ${result.score} → ${again.score}`);
+      } else if (fixes.length) result.steps.push(`Tried ${fixes.length} corrected personas; none scored higher than yours (${result.score}), so yours stays`);
       const next = nextSteps(revision ? { ...result, persona: revision.persona, realistic: { ...result.realistic, alsoLike: revision.alsoLike } } : result);
       // Agent loop, step 3: who already wins these people (models to copy) and who competes for them.
       const rivals = await competitors(revision ? revision.persona : result.persona).catch(() => null);
