@@ -1,6 +1,6 @@
 // Persona Reality Check server. Zero dependencies: node server.mjs
 import { serve } from "./lib/serve.mjs";
-import { analyze, normalize, revise, agesLabel, jaAge } from "./lib/analyze.mjs";
+import { analyze, normalize, revise, competitors, agesLabel, jaAge } from "./lib/analyze.mjs";
 import { qlooEnabled, recentCalls } from "./lib/qloo.mjs";
 import { catalog } from "./lib/sample-taste.mjs";
 import { extractPersona, writeMemo, llmEnabled, llmModel } from "./lib/llm.mjs";
@@ -66,7 +66,10 @@ serve({
         }
       }
       const next = nextSteps(revision ? { ...result, persona: revision.persona, realistic: { ...result.realistic, alsoLike: revision.alsoLike } } : result);
-      return { extracted, result, memo, revision, next };
+      // Agent loop, step 3: who already wins these people (models to copy) and who competes for them.
+      const rivals = await competitors(revision ? revision.persona : result.persona).catch(() => null);
+      if (rivals) result.steps.push(`${result.mode === "live" ? "Qloo insights: " : ""}${rivals.models.length + rivals.rivals.length} competitors this persona over-indexes on (${rivals.kind})`);
+      return { extracted, result, memo, revision, next, competitors: rivals };
     },
   },
 });
